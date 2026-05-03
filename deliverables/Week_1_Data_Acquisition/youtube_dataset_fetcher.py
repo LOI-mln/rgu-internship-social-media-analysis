@@ -1,6 +1,6 @@
 import subprocess, json, os, pandas as pd
 
-# 1. Scrape BBC News videos on Gaza
+# 1. Scraper les vidéos de BBC News sur Gaza
 os.makedirs("data", exist_ok=True)
 
 urls = [
@@ -25,7 +25,7 @@ for url in urls:
         url
     ])
 
-# 2. Convert to CSV
+# 2. Convertir en CSV
 all_comments = []
 
 for file in os.listdir("data/raw"):

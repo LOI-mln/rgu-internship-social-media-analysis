@@ -5,20 +5,20 @@ import matplotlib.pyplot as plt
 
 print("🔴 Task 6: Evaluation of We/Them alignment...")
 
-# Load the scored dataset
+# Charger le jeu de données scoré
 try:
     df = pd.read_csv("data/cleaned/hateful_memes_clip_scored.csv")
 except FileNotFoundError:
     print("Error: The file hateful_memes_clip_scored.csv was not found.")
     exit(1)
 
-# Create the folder for figures
+# Créer le dossier pour les figures
 os.makedirs("docs/figures", exist_ok=True)
 
-# Define the style
+# Définir le style
 sns.set_theme(style="whitegrid")
 
-# 1. Boxplot: Cosine Similarity by Toxicity (Hateful vs Non-Hateful)
+# 1. Boîte à moustaches : Similarité cosinus par toxicité (Haineux vs Non haineux)
 plt.figure(figsize=(8, 6))
 sns.boxplot(x='label', y='clip_similarity', data=df, hue='label', palette='Set2', legend=False)
 plt.title("Text/Image Alignment by Meme Toxicity", fontsize=14)
@@ -28,7 +28,7 @@ plt.tight_layout()
 plt.savefig("docs/figures/cosine_similarity_by_label.png", dpi=300)
 plt.close()
 
-# 2. Barplot: Distribution of Visual Labels "We/Them"
+# 2. Graphique à barres : Distribution des étiquettes visuelles "Nous/Eux"
 plt.figure(figsize=(10, 6))
 ax = sns.countplot(y='visual_label', data=df, hue='visual_label', palette='pastel', legend=False)
 plt.title("Visual Prediction (Zero-Shot) of Memes", fontsize=14)
@@ -38,7 +38,7 @@ plt.tight_layout()
 plt.savefig("docs/figures/visual_predictions_distribution.png", dpi=300)
 plt.close()
 
-# 3. Global metrics
+# 3. Métriques globales
 hateful_mean_sim = df[df['label'] == 1]['clip_similarity'].mean()
 nonhateful_mean_sim = df[df['label'] == 0]['clip_similarity'].mean()
 
