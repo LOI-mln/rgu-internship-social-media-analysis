@@ -1,82 +1,83 @@
-📊 Stage RGU : Analyse Transplateforme des Médias Sociaux
+📊 RGU Internship: Cross-platform Social Media Analysis
 
-Ce projet est réalisé dans le cadre d'un stage de 10 semaines à la Robert Gordon University (RGU). L'objectif est de collecter, traiter et analyser des données provenant de Reddit et YouTube pour étudier les dynamiques de communication, le sentiment et la toxicité en ligne.
-🎯 Objectifs du Projet
+This project is part of a 10-week internship at Robert Gordon University (RGU). The objective is to collect, process, and analyze data from Reddit and YouTube to study online communication dynamics, sentiment, and toxicity.
 
-    Collecte de données : Scraping automatisé via les API de Reddit (PRAW) et YouTube (yt-dlp).
+🎯 Project Objectives
 
-    Analyse NLP : Utilisation de modèles de langage (Hugging Face) pour le scoring de toxicité et l'analyse de sentiment.
+    Data Collection: Automated scraping via Reddit (PRAW) and YouTube (yt-dlp) APIs.
 
-    Visualisation : Création de dashboards pour comparer les comportements entre plateformes.
+    NLP Analysis: Using language models (Hugging Face) for toxicity scoring and sentiment analysis.
 
-📂 Structure du Projet
+    Visualization: Creating dashboards to compare behaviors across platforms.
+
+📂 Project Structure
 Plaintext
 
 .
-├── data/ # Données brutes et traitées (ignoré par Git)
-├── docs/ # Documentation et rapports de stage
-├── src/ # Code source Python (scrapers, analyse)
-├── tests/ # Scripts de test
-├── .env # Clés API privées (ignoré par Git)
-├── .gitignore # Fichiers à exclure du repo
-└── README.md # Présentation du projet
+├── data/       # Raw and processed data (ignored by Git)
+├── docs/       # Documentation and internship reports
+├── src/        # Python source code (scrapers, analysis)
+├── tests/      # Test scripts
+├── .env        # Private API keys (ignored by Git)
+├── .gitignore  # Files to exclude from the repo
+└── README.md   # Project overview
 
 🛠 Installation
-Prérequis
+Prerequisites
 
-    Python 3.10 ou supérieur
+    Python 3.10 or higher
 
-    Un compte Reddit (pour les accès API)
+    A Reddit account (for API access)
 
-1. Cloner le projet
+1. Clone the project
    Bash
 
-git clone <url-de-ton-repo>
-cd <nom-du-dossier>
+git clone <your-repo-url>
+cd <folder-name>
 
-2. Configurer l'environnement virtuel
+2. Set up the virtual environment
    Bash
 
 python3 -m venv venv
 
-# Activer sur Mac/Linux :
+# Activate on Mac/Linux:
 
 source venv/bin/activate
 
-# Activer sur Windows :
+# Activate on Windows:
 
 .\venv\Scripts\activate
 
-3. Installer les dépendances
+3. Install dependencies
    Bash
 
 pip install praw yt-dlp transformers torch pandas python-dotenv
 
 ⚙️ Configuration
 
-Créez un fichier .env à la racine du projet pour stocker vos identifiants :
+Create a .env file at the root of the project to store your credentials:
 Plaintext
 
-REDDIT_CLIENT_ID="votre_id"
-REDDIT_CLIENT_SECRET="votre_secret"
+REDDIT_CLIENT_ID="your_id"
+REDDIT_CLIENT_SECRET="your_secret"
 REDDIT_USER_AGENT="RGU_Internship_Scraper_v1.0"
 
-🚀 Utilisation
+🚀 Usage
 
-Pour tester les scrapers (Semaine 1) :
+To test the scrapers (Week 1):
 
-    Reddit : python src/test_reddit.py
+    Reddit: python src/test_reddit.py
 
-    YouTube : python src/test_youtube.py
+    YouTube: python src/test_youtube.py
 
-🗓 Roadmap (Aperçu)
+🗓 Roadmap (Overview)
 
-    Phase 1 : Setup et Scraping (Semaines 1-2)
+    Phase 1: Setup and Scraping (Weeks 1-2)
 
-    Phase 2 : Analyse Exploratoire & NLP (Semaines 3-6)
+    Phase 2: Exploratory Analysis & NLP (Weeks 3-6)
 
-    Phase 3 : Dashboard & Reporting (Semaines 7-9)
+    Phase 3: Dashboard & Reporting (Weeks 7-9)
 
-    Phase 4 : Soutenance & Finalisation (Semaine 10)
+    Phase 4: Defense & Finalization (Week 10)
 
-Auteur : Milan LOI - Stagiaire à RGU
+Author: Milan LOI - Intern at RGU
