@@ -1,6 +1,6 @@
 import subprocess, json, os, pandas as pd
 
-# 1. Scraper les vidéos BBC News sur Gaza
+# 1. Scrape BBC News videos on Gaza
 os.makedirs("data", exist_ok=True)
 
 urls = [
@@ -25,7 +25,7 @@ for url in urls:
         url
     ])
 
-# 2. Convertir en CSV
+# 2. Convert to CSV
 all_comments = []
 
 for file in os.listdir("data/raw"):
@@ -41,4 +41,4 @@ for file in os.listdir("data/raw"):
 
 df = pd.DataFrame(all_comments)
 df.to_csv("data/raw/youtube_bbc_gaza.csv", index=False)
-print(f"✅ {len(df)} commentaires sauvegardés dans data/raw/youtube_bbc_gaza.csv")
+print(f"✅ {len(df)} comments saved to data/raw/youtube_bbc_gaza.csv")
