@@ -22,7 +22,7 @@ st.markdown("""
     
     /* Headers with Gradient */
     h1, h2, h3 {
-        background: -webkit-linear-gradient(45deg, #FF4B2B, #FF416C);
+        background: -webkit-linear-gradient(45deg, #3B82F6, #1D4ED8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
@@ -32,24 +32,74 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Style Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
+    /* Premium Sidebar Styling & Navigation */
+    section[data-testid="stSidebar"] {
+        background-color: #11141E !important;
+        border-right: 1px solid #232936 !important;
     }
-    .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        white-space: pre-wrap;
-        background-color: transparent;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        color: #B0B0B0;
-        font-weight: 600;
+    
+    section[data-testid="stSidebar"] h2 {
+        background: -webkit-linear-gradient(45deg, #3B82F6, #1D4ED8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+        border-bottom: none !important;
     }
-    .stTabs [aria-selected="true"] {
-        color: #FF416C !important;
-        border-bottom: 3px solid #FF416C !important;
+
+    /* Style Streamlit Radio Buttons as professional vertical menu items */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] {
+        gap: 6px !important;
+        padding-top: 10px !important;
+    }
+    
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label {
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 0px !important;
+        padding: 6px 12px !important;
+        transition: none !important;
+        cursor: pointer !important;
+        width: 100% !important;
+        color: #8E9AA8 !important;
+        font-weight: 400 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label:hover {
+        background-color: transparent !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Highlight selected option with a professional blue color and classic > arrow */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] {
+        background-color: transparent !important;
+        border: none !important;
+        color: #3B82F6 !important;
+        font-weight: 700 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Prepend a classic > text arrow to the active navigation item */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"]::before {
+        content: "> " !important;
+        color: #3B82F6 !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Hide default radio circle indicator for a cleaner menu look */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label [role="presentation"] {
+        display: none !important;
+    }
+    
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label div[class*="StyledRadio"] {
+        display: none !important;
     }
     
     /* Metric Cards */
@@ -65,7 +115,7 @@ st.markdown("""
     hr {
         border: 0;
         height: 1px;
-        background-image: linear-gradient(to right, rgba(255, 65, 108, 0), rgba(255, 65, 108, 0.75), rgba(255, 65, 108, 0));
+        background-image: linear-gradient(to right, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0));
         margin: 40px 0;
     }
     </style>
@@ -80,7 +130,8 @@ CLUSTER_NAMES = {
     5: "Far-Left Network",
     6: "Conspiracy & Fringe",
     7: "Local Politics",
-    8: "International Discourse"
+    8: "International Discourse",
+    9: "Climate Change & Environmental Awareness"
 }
 
 def get_cluster_name(comm_id):
@@ -133,6 +184,17 @@ def load_time_series_data():
         dfs.append(ig_df[['date', 'platform', 'we_count', 'them_count']])
     except Exception: pass
     
+    # Dynamic scan of uploaded datasets
+    uploaded_dir = "data/uploaded"
+    if os.path.exists(uploaded_dir):
+        for filename in os.listdir(uploaded_dir):
+            if filename.endswith(".csv"):
+                try:
+                    up_df = pd.read_csv(os.path.join(uploaded_dir, filename))
+                    up_df['date'] = pd.to_datetime(up_df['date'], errors='coerce')
+                    dfs.append(up_df[['date', 'platform', 'we_count', 'them_count']])
+                except Exception: pass
+                
     if not dfs:
         return pd.DataFrame()
         
@@ -150,22 +212,24 @@ def load_time_series_data():
 st.title("We vs Them: Social Media Polarization")
 st.markdown("An interactive dashboard analyzing political discourse, echo chambers, and toxicity across multiple platforms.")
 
-# Sidebar Filters
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png", width=50)
-st.sidebar.markdown("## Global Settings")
-selected_platform = st.sidebar.selectbox("Select Platform (for Time-Series)", ["All", "Reddit", "Twitter", "Instagram"])
-selected_topic = st.sidebar.selectbox("Select Topic (for Metrics)", ["All", "Elections", "Climate Change", "Economy", "Healthcare"])
-st.sidebar.markdown("---")
-st.sidebar.info("The YouTube dataset was excluded from temporal plots to prevent skewed results, as its videos concentrate on very specific historical periods. It remains fully integrated in overall cross-platform metrics.")
+# Sidebar Filters & Navigation
+st.sidebar.markdown("## Dashboard Navigation")
+selected_page = st.sidebar.radio(
+    "Navigation Menu",
+    [
+        "1. Overview & AI Baselines", 
+        "2. Echo Chambers Network", 
+        "3. Polarization & Toxicity", 
+        "4. Cross-Platform Metrics",
+        "5. Import New Dataset"
+    ],
+    label_visibility="collapsed"
+)
 
-tabs = st.tabs([
-    "📊 1. Overview & AI Baselines", 
-    "🕸️ 2. Echo Chambers Network", 
-    "🔥 3. Polarization & Toxicity", 
-    "📈 4. Cross-Platform Metrics"
-])
+selected_platform = "All"
+selected_topic = "All"
 
-with tabs[0]:
+if selected_page.startswith("1."):
     st.header("Exploratory Data Analysis & Baseline")
     st.markdown("""
     Before deploying complex AI, we established a baseline using standard lexicons.
@@ -191,7 +255,7 @@ with tabs[0]:
         if os.path.exists("deliverables/Week_3_Multimodal_Analysis/cosine_similarity_by_label.png"):
             st.image("deliverables/Week_3_Multimodal_Analysis/cosine_similarity_by_label.png", caption="Text/Image Cosine Similarity by Label", use_container_width=True)
 
-with tabs[1]:
+elif selected_page.startswith("2."):
     st.header("The Architecture of Polarization")
     st.markdown("""
     How do users interact? We constructed a massive cross-platform directed graph using replies and mentions to detect echo chambers via **Louvain Modularity**.
@@ -204,7 +268,7 @@ with tabs[1]:
             st.code(metrics, language="text")
 
     st.subheader("Interactive Cross-Platform Network")
-    st.info("💡 **How to read this graph:**\n* **Nodes (Circles):** Individual users or posts. Size is based on their *Degree* (influence/number of connections).\n* **Colors:** Represent distinct 'Echo Chambers' (Louvain clusters). Users of the same color interact heavily with each other but rarely with other colors.\n* **Edges (Lines):** Direct interactions (mentions, replies, quotes).")
+    st.info("**How to read this graph:**\n* **Nodes (Circles):** Individual users or posts. Size is based on their *Degree* (influence/number of connections).\n* **Colors:** Represent distinct 'Echo Chambers' (Louvain clusters). Users of the same color interact heavily with each other but rarely with other colors.\n* **Edges (Lines):** Direct interactions (mentions, replies, quotes).")
     st.markdown("Zoom and pan to explore the topology of political discourse. Noise has been filtered out (only users with ≥3 connections are shown) to reveal the true core structure.")
     
     gml_path = "deliverables/week_5/cross_platform_merged.gml"
@@ -279,12 +343,12 @@ with tabs[1]:
     else:
         st.warning("Graph layout missing. Run precompute script.")
 
-with tabs[2]:
+elif selected_page.startswith("3."):
     st.header("Quantifying Toxicity & Polarization")
     st.markdown("""
     To measure the severity of echo chambers, we calculate the **Polarization Index** by intersecting linguistic tribalism with Google Perspective API toxicity scores.
     """)
-    st.info("💡 **Understanding the Metrics:**\n* **We/Them Ratio:** A high ratio means the community is highly tribal, talking mostly about 'us' vs 'them' (in-group vs out-group mechanics).\n* **Mean Toxicity:** Scored by Google Perspective AI (0 to 1). Higher means more aggressive/insulting language.\n* **Polarization Index:** The combination of both. A high index highlights dangerous echo chambers spreading toxic tribalism.")
+    st.info("**Understanding the Metrics:**\n* **We/Them Ratio:** A high ratio means the community is highly tribal, talking mostly about 'us' vs 'them' (in-group vs out-group mechanics).\n* **Mean Toxicity:** Scored by Google Perspective AI (0 to 1). Higher means more aggressive/insulting language.\n* **Polarization Index:** The combination of both. A high index highlights dangerous echo chambers spreading toxic tribalism.")
     
     heatmap_path = "deliverables/week_6/cluster_polarization_heatmap.png"
     csv_path = "deliverables/week_6/community_polarization_metrics.csv"
@@ -295,27 +359,70 @@ with tabs[2]:
         
         # Top level metrics for Polarization tab
         top_polar = metrics_df.loc[metrics_df['Polarization_Index'].idxmax()]
-        st.error(f"🚨 **Highest Polarization Detected:** {top_polar['Community']} with an index of **{top_polar['Polarization_Index']:.3f}**.")
+        st.error(f"**Highest Polarization Detected:** {top_polar['Community']} with an index of **{top_polar['Polarization_Index']:.3f}**.")
         
-        col1, col2 = st.columns([1.2, 1])
-        with col1:
-            st.markdown("#### Polarization Heatmap")
-            heatmap_data = metrics_df.set_index('Community')[['We_Them_Ratio', 'Mean_Toxicity', 'Polarization_Index']]
-            fig_hm = px.imshow(heatmap_data, 
-                               color_continuous_scale='Magma', 
-                               aspect="auto",
-                               text_auto=".2f",
-                               labels=dict(x="Metrics", y="Echo Chamber", color="Value"))
-            fig_hm.update_layout(plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white", margin=dict(t=10, l=10, r=10, b=10))
-            st.plotly_chart(fig_hm, use_container_width=True)
-            
-        with col2:
-            st.markdown("#### Community Metrics")
-            st.dataframe(metrics_df[['Community', 'We_Them_Ratio', 'Mean_Toxicity', 'Polarization_Index']].style.format(precision=2).background_gradient(cmap='magma', subset=['Polarization_Index', 'Mean_Toxicity']), use_container_width=True)
+        st.markdown("---")
+        
+        # 1. Polarization Heatmap (Full Width)
+        st.markdown("### Polarization Heatmap")
+        original_df = metrics_df.set_index('Community')[['We_Them_Ratio', 'Mean_Toxicity', 'Polarization_Index']]
+        
+        # Min-max normalization per column to stretch color gradients across their actual ranges.
+        # This highlights relative polarization/toxicity properly (preventing everything from looking "nice").
+        normalized_df = (original_df - original_df.min()) / (original_df.max() - original_df.min())
+        
+        fig_hm = px.imshow(normalized_df, 
+                           color_continuous_scale=['#2E7D32', '#FBC02D', '#D32F2F'], 
+                           aspect="auto",
+                           labels=dict(x="Metrics", y="Echo Chamber"))
+        
+        # Display original raw values inside cells and custom tooltips
+        fig_hm.update_traces(
+            text=original_df.values,
+            texttemplate="%{text:.2f}",
+            customdata=original_df.values,
+            hovertemplate="<b>Echo Chamber:</b> %{y}<br><b>Metric:</b> %{x}<br><b>Actual Value:</b> %{customdata:.2f}<extra></extra>"
+        )
+        
+        fig_hm.update_layout(
+            coloraxis_showscale=False,
+            plot_bgcolor='#0E1117', 
+            paper_bgcolor='#0E1117', 
+            font_color="white", 
+            margin=dict(t=20, l=10, r=10, b=20),
+            height=450
+        )
+        st.plotly_chart(fig_hm, use_container_width=True)
+        
+        st.markdown("""
+        **Heatmap Interpretation & Insights:**
+        *   **Visualizing Extremes**: This heatmap highlights the concentration of tribal behavior across communities. Red cells represent highly elevated scores (high toxicity/polarization), while green cells indicate healthier, less-polarized discussion environments.
+        *   **Linguistic & Toxicity Corroboration**: It reveals whether a community is simply internally cohesive (high *We/Them Ratio* but low *Toxicity*) or actively hostile (high scores in both categories). Communities exhibiting elevated values in both dimensions highlight critical echo chambers.
+        """)
+        
+        st.markdown("---")
+        
+        # 2. Community Metrics Table (Full Width)
+        st.markdown("### Detailed Community Metrics Table")
+        st.dataframe(
+            metrics_df[['Community', 'We_Them_Ratio', 'Mean_Toxicity', 'Polarization_Index']]
+            .style.format(precision=2)
+            .background_gradient(cmap='RdYlGn_r', subset=['Mean_Toxicity'], vmin=0.35, vmax=0.55)
+            .background_gradient(cmap='RdYlGn_r', subset=['Polarization_Index'], vmin=0.05, vmax=0.50)
+            .background_gradient(cmap='RdYlGn_r', subset=['We_Them_Ratio'], vmin=0.15, vmax=1.10), 
+            use_container_width=True
+        )
+        
+        st.markdown("""
+        **Metrics Explanation & Methodology:**
+        *   **We/Them Ratio (Linguistic Tribalism)**: Measures the relative frequency of in-group pronouns (*we, us, our*) compared to out-group pronouns (*they, them, their*). A ratio greater than $1.0$ indicates that the community is primarily self-referencing or tribal in its discourse patterns.
+        *   **Mean Toxicity**: Calculated using the Google Perspective API. It indicates the average probability score (between $0.0$ and $1.0$) that comments in the cluster contain rude, respectful, or toxic language.
+        *   **Polarization Index**: An aggregated mathematical index crossing linguistic tribalism with toxic speech probability. Clusters with a high Polarization Index represent hostile echo chambers that actively foster polarization, posing a potential risk of extreme group polarization.
+        """)
     else:
         st.info("No metrics file found. Run Week 6 scripts.")
 
-with tabs[3]:
+elif selected_page.startswith("4."):
     st.header("Temporal Evolution & Platform Comparison")
     
     df_ts = load_time_series_data()
@@ -338,7 +445,7 @@ with tabs[3]:
 
         st.subheader("Final Comparative Analytics")
         st.markdown("A macro-level comparison of user behavior, discourse quality, and engagement metrics.")
-        st.info("💡 **What this means:**\n* **Engagement:** Shows how viral content gets on average (Likes, Upvotes, Retweets).\n* **Negativity:** The overall pessimism of the text.\n* **Topic Density:** Average post length (Words per Post). Higher density means longer, more complex discussions (e.g. Reddit), lower means fast-paced reactions (e.g. Twitter).")
+        st.info("**What this means:**\n* **Engagement:** Shows how viral content gets on average (Likes, Upvotes, Retweets).\n* **Negativity:** The overall pessimism of the text.\n* **Topic Density:** Average post length (Words per Post). Higher density means longer, more complex discussions (e.g. Reddit), lower means fast-paced reactions (e.g. Twitter).")
         
         @st.cache_data
         def build_final_table(topic_filter):
@@ -383,6 +490,27 @@ with tabs[3]:
                              'Topic Density (Words/Post)': df_ig['text'].astype(str).apply(lambda x: len(x.split())).mean()})
             except Exception: pass
             
+            # Scan uploaded datasets for overall metrics
+            uploaded_dir = "data/uploaded"
+            if os.path.exists(uploaded_dir):
+                for filename in os.listdir(uploaded_dir):
+                    if filename.endswith(".csv"):
+                        try:
+                            up_df = pd.read_csv(os.path.join(uploaded_dir, filename))
+                            platform_name = up_df['platform'].iloc[0] if 'platform' in up_df.columns else filename.replace('_uploaded.csv', '').capitalize()
+                            
+                            neg_score = up_df['negativity_score'].mean() * topic_modifier if 'negativity_score' in up_df.columns else 0.35 * topic_modifier
+                            avg_word_count = up_df['word_count'].mean() if 'word_count' in up_df.columns else 15.0
+                            avg_eng = up_df['engagement'].mean() * topic_modifier if 'engagement' in up_df.columns else 0.0
+                            
+                            data.append({
+                                'Platform': platform_name,
+                                'Engagement (Avg Likes)': avg_eng,
+                                'Negativity / Toxicity': neg_score,
+                                'Topic Density (Words/Post)': avg_word_count
+                            })
+                        except Exception: pass
+            
             df_final = pd.DataFrame(data)
             return df_final
             
@@ -414,3 +542,89 @@ with tabs[3]:
             st.info("No temporal data available for the selected platform.")
     else:
         st.info("Time-series data is not available. Ensure datasets exist.")
+
+elif selected_page.startswith("5."):
+    st.header("Import New Dataset")
+    st.markdown("""
+    Incorporate custom text datasets to analyze language patterns across different platforms.
+    All data is processed locally, extracting linguistic tribalism indicators.
+    """)
+    
+    uploaded_file = st.file_uploader("Upload CSV Dataset", type=["csv"])
+    
+    if uploaded_file is not None:
+        try:
+            # Load preview
+            df_preview = pd.read_csv(uploaded_file, nrows=5)
+            st.markdown("### Dataset Preview")
+            st.dataframe(df_preview, use_container_width=True)
+            
+            # Form for configuration
+            with st.form("mapping_form"):
+                st.markdown("### Schema Mapping & Processing Configuration")
+                
+                platform_input = st.text_input("Platform Name", placeholder="e.g. Facebook, TikTok").strip()
+                
+                columns = df_preview.columns.tolist()
+                text_col = st.selectbox("Text Content Column (Required)", columns)
+                date_col = st.selectbox("Date / Timestamp Column (Optional)", ["None"] + columns)
+                eng_col = st.selectbox("Engagement / Likes Column (Optional)", ["None"] + columns)
+                tox_col = st.selectbox("Toxicity / Negativity Column (Optional)", ["None"] + columns)
+                
+                submit_button = st.form_submit_button("Import & Process Dataset")
+                
+                if submit_button:
+                    if not platform_input:
+                        st.error("Please enter a valid Platform Name.")
+                    elif not text_col:
+                        st.error("Please map a Text Content Column.")
+                    else:
+                        with st.spinner("Processing text and compiling pronoun indicators..."):
+                            # Read entire CSV
+                            uploaded_file.seek(0)
+                            df_full = pd.read_csv(uploaded_file)
+                            
+                            # Clean and standardise
+                            processed_df = pd.DataFrame()
+                            processed_df['platform'] = [platform_input] * len(df_full)
+                            
+                            # Parse dates
+                            if date_col != "None":
+                                processed_df['date'] = pd.to_datetime(df_full[date_col], errors='coerce')
+                            else:
+                                processed_df['date'] = pd.NaT
+                                
+                            # Parse text and calculate counts
+                            WE_PRONOUNS = ["we", "us", "our", "ours", "ourselves"]
+                            THEM_PRONOUNS = ["they", "them", "their", "theirs", "themselves"]
+                            we_regex = r'\b(?:' + '|'.join(WE_PRONOUNS) + r')\b'
+                            them_regex = r'\b(?:' + '|'.join(THEM_PRONOUNS) + r')\b'
+                            
+                            text_series = df_full[text_col].astype(str).str.lower()
+                            processed_df['we_count'] = text_series.str.count(we_regex).fillna(0).astype(int)
+                            processed_df['them_count'] = text_series.str.count(them_regex).fillna(0).astype(int)
+                            processed_df['word_count'] = text_series.apply(lambda x: len(x.split())).fillna(0).astype(int)
+                            
+                            # Parse engagement
+                            if eng_col != "None":
+                                processed_df['engagement'] = pd.to_numeric(df_full[eng_col], errors='coerce').fillna(0)
+                            else:
+                                processed_df['engagement'] = 0.0
+                                
+                            # Parse negativity/toxicity
+                            if tox_col != "None":
+                                processed_df['negativity_score'] = pd.to_numeric(df_full[tox_col], errors='coerce').fillna(0.35)
+                            else:
+                                processed_df['negativity_score'] = 0.35
+                                
+                            # Save processed file
+                            os.makedirs("data/uploaded", exist_ok=True)
+                            target_filename = f"data/uploaded/{platform_input.lower().replace(' ', '_')}_uploaded.csv"
+                            processed_df.to_csv(target_filename, index=False)
+                            
+                            # Clear Streamlit cache to force reload
+                            st.cache_data.clear()
+                            
+                            st.success(f"Successfully processed and integrated the {platform_input} dataset! Navigate to page 4. Cross-Platform Metrics to view the metrics.")
+        except Exception as e:
+            st.error(f"Error loading the CSV dataset: {str(e)}")
