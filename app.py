@@ -458,7 +458,7 @@ elif selected_page.startswith("4."):
             try:
                 df_yt = pd.read_csv("data/cleaned/youtube_cleaned.csv")
                 data.append({'Platform': 'YouTube', 
-                             'Engagement (Avg Likes)': df_yt['like_count'].mean() * topic_modifier,
+                             'Engagement (Avg Metric)': df_yt['like_count'].mean() * topic_modifier,
                              'Negativity / Toxicity': df_yt.get('negativity_score', pd.Series([0.2])).mean() * topic_modifier,
                              'Topic Density (Words/Post)': df_yt['text'].astype(str).apply(lambda x: len(x.split())).mean()})
             except Exception: pass
@@ -467,7 +467,7 @@ elif selected_page.startswith("4."):
             try:
                 df_rd = pd.read_csv("data/cleaned/reddit_political_cleaned.csv")
                 data.append({'Platform': 'Reddit', 
-                             'Engagement (Avg Score)': df_rd['score'].mean() * topic_modifier,
+                             'Engagement (Avg Metric)': df_rd['score'].mean() * topic_modifier,
                              'Negativity / Toxicity': df_rd.get('negativity_score', pd.Series([0.3])).mean() * topic_modifier,
                              'Topic Density (Words/Post)': df_rd['selftext'].astype(str).apply(lambda x: len(x.split())).mean()})
             except Exception: pass
@@ -476,7 +476,7 @@ elif selected_page.startswith("4."):
             try:
                 df_tw = pd.read_csv("data/shahana_bano_datasets/twitter/twitter_we-language_dataset.csv")
                 data.append({'Platform': 'Twitter', 
-                             'Engagement (Avg Likes/RT)': (df_tw['likeCount'] + df_tw['retweetCount']).mean() * topic_modifier,
+                             'Engagement (Avg Metric)': (df_tw['likeCount'] + df_tw['retweetCount']).mean() * topic_modifier,
                              'Negativity / Toxicity': 0.45 * topic_modifier, # Simulated for missing score
                              'Topic Density (Words/Post)': df_tw['text'].astype(str).apply(lambda x: len(x.split())).mean()})
             except Exception: pass
@@ -485,7 +485,7 @@ elif selected_page.startswith("4."):
             try:
                 df_ig = pd.read_csv("data/shahana_bano_datasets/instagram/instagram_comments_dataset.csv")
                 data.append({'Platform': 'Instagram', 
-                             'Engagement (Avg Likes)': df_ig['likesCount'].mean() * topic_modifier,
+                             'Engagement (Avg Metric)': df_ig['likesCount'].mean() * topic_modifier,
                              'Negativity / Toxicity': 0.38 * topic_modifier, # Simulated for missing score
                              'Topic Density (Words/Post)': df_ig['text'].astype(str).apply(lambda x: len(x.split())).mean()})
             except Exception: pass
@@ -505,7 +505,7 @@ elif selected_page.startswith("4."):
                             
                             data.append({
                                 'Platform': platform_name,
-                                'Engagement (Avg Likes)': avg_eng,
+                                'Engagement (Avg Metric)': avg_eng,
                                 'Negativity / Toxicity': neg_score,
                                 'Topic Density (Words/Post)': avg_word_count
                             })
@@ -516,19 +516,15 @@ elif selected_page.startswith("4."):
             
         final_table = build_final_table(selected_topic)
         if not final_table.empty:
-            st.dataframe(final_table.style.format(precision=2).background_gradient(cmap='Blues', subset=['Engagement (Avg Likes)', 'Engagement (Avg Score)', 'Engagement (Avg Likes/RT)'], axis=None), use_container_width=True)
+            st.dataframe(final_table.style.format(precision=2).background_gradient(cmap='Blues', subset=['Engagement (Avg Metric)'], axis=None), use_container_width=True)
             
         st.divider()
 
         # Time Series
-        st.subheader(f"Temporal 'We vs Them' Prevalence ({selected_platform if selected_platform != 'All' else 'Cross-Platform'})")
+        st.subheader("Temporal 'We vs Them' Prevalence on Reddit")
 
-        
-        # Filter for Time Series (excluding YouTube NaT rows automatically because we dropna earlier, wait no, they are NaT so they won't group by month_year well if we dropna, but we handled it)
-        ts_data = df_ts.dropna(subset=['month_year'])
-        
-        if selected_platform != "All":
-            ts_data = ts_data[ts_data['platform'] == selected_platform]
+        # Filter for Time Series (strictly Reddit as it is the only platform with continuous historical timestamps)
+        ts_data = df_ts[df_ts['platform'] == 'Reddit'].dropna(subset=['month_year'])
             
         if not ts_data.empty:
             agg_ts = ts_data.groupby('month_year')[['we_count', 'them_count']].sum().reset_index()
@@ -536,7 +532,7 @@ elif selected_page.startswith("4."):
             
             fig_ts = px.area(agg_ts, x='month_year', y=['we_count', 'them_count'], 
                              color_discrete_map={'we_count': '#1E90FF', 'them_count': '#FF416C'})
-            fig_ts.update_layout(plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white", xaxis_title="Date", yaxis_title="Pronoun Volume", legend_title="Type")
+            fig_ts.update_layout(plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white", xaxis_title="Date (Month-Year)", yaxis_title="Pronoun Volume", legend_title="Type")
             st.plotly_chart(fig_ts, use_container_width=True)
         else:
             st.info("No temporal data available for the selected platform.")
