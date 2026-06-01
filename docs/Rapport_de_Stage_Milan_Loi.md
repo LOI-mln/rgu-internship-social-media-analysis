@@ -14,7 +14,7 @@ Robert Gordon University (RGU)
 School of Computing Science and Digital Media
 Garthdee Road, Aberdeen, AB10 7QB, Écosse, Royaume-Uni
 
-**Tuteur en entreprise** : Dr. John Smith, Senior Research Fellow in Natural Language Processing & Data Science
+**Tutrice en entreprise** : Dr. Shahana Bano, Lecturer in the School of Computing
 **Tuteur pédagogique** : M. Jean-Marc Garcia, Enseignant-Chercheur en Informatique à l'IUT
 
 ---
@@ -23,7 +23,7 @@ Garthdee Road, Aberdeen, AB10 7QB, Écosse, Royaume-Uni
 
 Je tiens à exprimer ma profonde gratitude à l'ensemble des personnes qui ont contribué au bon déroulement et à la réussite de ce stage de deuxième année de BUT Informatique au sein de la Robert Gordon University (RGU).
 
-Tout d'abord, je remercie chaleureusement mon tuteur en entreprise, le Dr. John Smith, chercheur au sein de la School of Computing Science and Digital Media de RGU. Ses précieux conseils, son expertise scientifique en traitement automatique du langage naturel (NLP) et en analyse de réseaux, ainsi que sa rigueur méthodologique m'ont guidé tout au long de ces dix semaines de recherche et de développement. Je le remercie également pour son accueil et pour m'avoir intégré au sein des projets de recherche de l'université.
+Tout d'abord, je remercie chaleureusement ma tutrice en entreprise, la Dr. Shahana Bano, enseignante-chercheuse au sein de la School of Computing Science and Digital Media de RGU. Ses précieux conseils, son expertise scientifique en traitement automatique du langage naturel (NLP), en apprentissage automatique et en cybersécurité, ainsi que sa rigueur méthodologique m'ont guidé tout au long de ces dix semaines de recherche et de développement. Je la remercie également pour son accueil et pour m'avoir intégré au sein des projets de recherche de l'université.
 
 Je tiens également à remercier mon tuteur pédagogique, M. Jean-Marc Garcia, enseignant-chercheur à l'IUT, pour son accompagnement, sa disponibilité et son suivi attentif depuis la recherche de ce stage jusqu'à la phase finale de rédaction de ce rapport. Ses conseils administratifs et académiques ont été essentiels pour structurer mon travail conformément aux exigences universitaires.
 
@@ -84,7 +84,7 @@ L'augmentation continue de la polarisation idéologique et de la toxicité en li
 
 ### 1.2. Contexte du Stage à Robert Gordon University
 
-C'est dans ce contexte académique et technologique que s'inscrit mon stage de fin de deuxième année de Bachelor Universitaire de Technologie (BUT) Informatique. D'une durée de dix semaines (du 6 avril au 12 juin 2026), ce stage s'est déroulé au sein de la School of Computing Science and Digital Media de la Robert Gordon University (RGU), située à Aberdeen, en Écosse. Intégré dans l'équipe de recherche en traitement automatique du langage naturel (NLP) et en science des données sociales sous la direction du Dr. John Smith, j'ai eu l'opportunité de concevoir et de développer un pipeline complet d'ingénierie et d'analyse de données, culminant avec la création d'un tableau de bord analytique interactif. Mon profil d'étudiant en informatique, spécialisé dans le développement logiciel, la manipulation de structures de données complexes et l'intégration de modèles pré-entraînés, correspondait directement aux exigences techniques du sujet.
+C'est dans ce contexte académique et technologique que s'inscrit mon stage de fin de deuxième année de Bachelor Universitaire de Technologie (BUT) Informatique. D'une durée de dix semaines (du 6 avril au 12 juin 2026), ce stage s'est déroulé au sein de la School of Computing Science and Digital Media de la Robert Gordon University (RGU), située à Aberdeen, en Écosse. Intégré dans l'équipe de recherche en traitement automatique du langage naturel (NLP) et en science des données sociales sous la direction de la Dr. Shahana Bano, j'ai eu l'opportunité de concevoir et de développer un pipeline complet d'ingénierie et d'analyse de données, culminant avec la création d'un tableau de bord analytique interactif. Mon profil d'étudiant en informatique, spécialisé dans le développement logiciel, la manipulation de structures de données complexes et l'intégration de modèles pré-entraînés, correspondait directement aux exigences techniques du sujet.
 
 ### 1.3. Problématique Académique
 
@@ -113,7 +113,7 @@ La Robert Gordon University (RGU) est une institution universitaire publique de 
 
 ### 2.2. Service Informatique et Équipe de Recherche
 
-J'ai été intégré au laboratoire de recherche en Data Science et Traitement Automatique des Langues (NLP). Cette équipe se compose de professeurs titulaires, de chercheurs post-doctoraux et de doctorants spécialisés dans l'analyse automatique des comportements discursifs sur le Web. Mon tuteur, le Dr. John Smith, est un chercheur spécialisé dans la modélisation de l'information et la détection automatique de la désinformation en ligne. L'équipe de recherche dispose d'une infrastructure de calcul performante comprenant des serveurs équipés de processeurs graphiques (GPUs) permettant d'entraîner et de manipuler des modèles de langage volumineux (LLMs). L'ambiance de travail y est multiculturelle et collaborative, favorisant des réunions hebdomadaires d'avancement basées sur des méthodologies de recherche agiles.
+J'ai été intégré au laboratoire de recherche en Data Science et Traitement Automatique des Langues (NLP). Cette équipe se compose de professeurs titulaires, de chercheurs post-doctoraux et de doctorants spécialisés dans l'analyse automatique des comportements discursifs sur le Web. Ma tutrice, la Dr. Shahana Bano, est une enseignante-chercheuse spécialisée dans le traitement automatique du langage naturel, l'apprentissage automatique et la cybersécurité. L'équipe de recherche dispose d'une infrastructure de calcul performante comprenant des serveurs équipés de processeurs graphiques (GPUs) permettant d'entraîner et de manipuler des modèles de langage volumineux (LLMs). L'ambiance de travail y est multiculturelle et collaborative, favorisant des réunions hebdomadaires d'avancement basées sur des méthodologies de recherche agiles.
 
 ### 2.3. Besoins de Recherche et État de l'Existant
 
@@ -323,7 +323,7 @@ Ces calculs démontrent la forte corrélation entre l'utilisation massive d'un p
 
 ### 4.5. Architecture de l'Application Streamlit et Code de Personnalisation
 
-Afin de rendre ces résultats accessibles, j'ai développé l'interface web sous **Streamlit** en intégrant des scripts d'optimisation CSS et sémantiques très stricts répondant aux contraintes méthodologiques de l'IUT et du Dr. Smith (GEMINI.md) :
+Afin de rendre ces résultats accessibles, j'ai développé l'interface web sous **Streamlit** en intégrant des scripts d'optimisation CSS et sémantiques très stricts répondant aux contraintes méthodologiques de l'IUT et de la Dr. Shahana Bano (GEMINI.md) :
 1.  **Esthétique sobre et documentaire (Flat Design)** : Hachage complet des éléments Streamlit superflus (logos, menus Streamlit par défaut).
 2.  **Système de navigation personnalisé pour la barre latérale** : Les liens radio par défaut de Streamlit ont été masqués et entièrement restylisés via CSS. L'option sélectionnée apparaît en gras, colorée en bleu saphir (`#3B82F6`) et précédée d'une flèche textuelle classique `> ` sans aucun effet de relief, de décalage ou de fond coloré.
 3.  **Normalisation relative des heatmaps** : Afin d'éviter l'aplatissement visuel des variations de toxicité (puisque les moyennes de toxicité réelles se concentrent entre 0,38 et 0,52, rendant une échelle absolue [0, 1] inutilement verte), nous appliquons une min-max normalisation par colonne pour forcer le contraste de vert à rouge tout en annotant la valeur absolue réelle à l'intérieur des cellules de la grille Plotly.
@@ -458,7 +458,7 @@ Ce projet reposait entièrement sur la manipulation de bases de données volumin
 *   *Après l'expérience* : 4,0 / 5
 
 **Justification technique des acquis** :
-En travaillant de manière autonome au sein d'une équipe de recherche internationale, j'ai dû piloter l'avancement de mes livrables de manière extrêmement rigoureuse. Je me suis appuyé sur un plan de développement structuré en 10 semaines, consigné dans un fichier de suivi de projet (`docs/internship_roadmap_wethem.xlsx`), et j'ai documenté mes progrès hebdomadaires dans le fichier d'accompagnement de l'IUT. J'ai su faire preuve d'autonomie et d'adaptation lorsque les contraintes techniques l'imposaient : par exemple, lors du blocage d'accès à l'API Reddit PRAW, j'ai immédiatement pivoté vers une intégration de datasets sémantiques équivalents pré-compilés sur Hugging Face pour ne pas retarder le calendrier du projet. Les revues de sprints hebdomadaires avec le Dr. John Smith m'ont permis d'ajuster continuellement la portée de mes livrables pour répondre parfaitement aux attentes de recherche de l'organisme d'accueil.
+En travaillant de manière autonome au sein d'une équipe de recherche internationale, j'ai dû piloter l'avancement de mes livrables de manière extrêmement rigoureuse. Je me suis appuyé sur un plan de développement structuré en 10 semaines, consigné dans un fichier de suivi de projet (`docs/internship_roadmap_wethem.xlsx`), et j'ai documenté mes progrès hebdomadaires dans le fichier d'accompagnement de l'IUT. J'ai su faire preuve d'autonomie et d'adaptation lorsque les contraintes techniques l'imposaient : par exemple, lors du blocage d'accès à l'API Reddit PRAW, j'ai immédiatement pivoté vers une intégration de datasets sémantiques équivalents pré-compilés sur Hugging Face pour ne pas retarder le calendrier du projet. Les revues de sprints hebdomadaires avec la Dr. Shahana Bano m'ont permis d'ajuster continuellement la portée de mes livrables pour répondre parfaitement aux attentes de recherche de l'organisme d'accueil.
 
 ---
 
@@ -521,7 +521,7 @@ Conformément aux recommandations d'éthique académique et aux consignes d'éva
 Au cours des phases de développement et de documentation (Semaines 1 à 8), j'ai utilisé l'assistant de programmation **Antigravity IDE** (intégrant le modèle de langage Gemini 3.5). L'objectif exclusif était de m'assister dans la recherche de syntaxes de programmation spécifiques (notamment pour l'injection CSS dans Streamlit et les paramètres de structure Plotly WebGL) ainsi que pour la correction orthographique de la documentation technique.
 
 #### Répartition de la Charge de Travail et Vérification Éthique
-Toute la structure méthodologique, le choix des équations de polarisation, la conception du graphe de fusion, le pipeline de nettoyage sémantique et la rédaction réflexive de ce rapport de stage relèvent entièrement de mon travail intellectuel personnel et de la validation empirique réalisée en collaboration avec mon tuteur, le Dr. John Smith.
+Toute la structure méthodologique, le choix des équations de polarisation, la conception du graphe de fusion, le pipeline de nettoyage sémantique et la rédaction réflexive de ce rapport de stage relèvent entièrement de mon travail intellectuel personnel et de la validation empirique réalisée en collaboration avec ma tutrice, la Dr. Shahana Bano.
 
 La charge de travail intellectuelle et matérielle associée à ce projet se décompose comme suit :
 

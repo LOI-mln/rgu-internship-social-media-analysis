@@ -10,7 +10,7 @@ import plotly.express as px
 # Setup Premium Config
 st.set_page_config(page_title="Echo Chambers & Polarization", layout="wide", initial_sidebar_state="expanded")
 
-# Inject Custom CSS for Premium Look
+# Inject Custom CSS
 st.markdown("""
     <style>
     /* Main Background & Text */
@@ -231,6 +231,32 @@ selected_topic = "All"
 
 if selected_page.startswith("1."):
     st.header("Exploratory Data Analysis & Baseline")
+    
+    # Academic Project Scope & Acquired Skills Expanders (Flat Design, Emoji-free)
+    with st.expander("Project Objectives & Technical Scope", expanded=False):
+        st.markdown("""
+        *   **Dataset Expansion & Metadata Design**: Ingest data from Reddit, YouTube, Twitter, and Instagram, designing a clean and standardized three-layer metadata schema.
+        *   **Engagement & Metadata Analytics**: Evaluate the correlation between lexical negativity and user engagement metrics (such as scores, likes, and replies).
+        *   **Multimodal Workflow Prototyping**: Deploy a local vision-language pipeline (CLIP) to analyze text-image sémantic alignments and perform zero-shot classifications on satirical meme datasets.
+        *   **Hashtag Co-occurrence Networks**: Construct weighted, undirected hashtag networks under NetworkX, computing PageRank, degree, and betweenness centralities.
+        *   **Direct Interaction Topologies**: Merge cross-platform replies and mentions into a directed graph to model and detect structural echo chambers using Louvain modularity.
+        *   **Linguistic Mapping & Toxicity Evaluation**: Track in-group/out-group tribalism (We/Them pronoun counts) intersected with Google Perspective API toxicity scores.
+        *   **Cross-Platform Comparison Dashboard**: Construct a scientific comparative dashboard in Streamlit to integrate all network and discursive metrics.
+        *   **Comparative Analysis & Time Series**: Produce platform-level tables (engagement, toxicity, topic density) and monthly timeline area plots.
+        *   **Academic Research Reporting**: Draft and compile formal reports (documenting research methods, mathematical formulations, limitations, and future steps).
+        """)
+        
+    with st.expander("Developed Academic & Technical Skills", expanded=False):
+        st.markdown("""
+        1.  **Multi-Platform Data Ingestion**: Safe data harvesting practices incorporating API rate limits, authentication, and robust handling.
+        2.  **Metadata Analytics**: Processing complex engagement metrics, text properties, and timeline trends using Pandas and NumPy.
+        3.  **Multimodal Deep Learning**: Integrating local vision-language models (CLIP PyTorch) and optimizing local hardware acceleration (MPS/CUDA).
+        4.  **Social Network Analysis (SNA)**: Modeling, parsing, and exporting complex networks (GML formats) using NetworkX and Pyvis.
+        5.  **Community Partitioning**: Implementing modularity optimization (Louvain algorithm) and interpreting sociological echo chamber behaviors.
+        6.  **Scientific Web Development**: Building responsive, hardware-optimized analytical dashboards in Streamlit (Plotly WebGL, caching, and custom CSS styling).
+        7.  **Academic Communication**: Authoring formal research papers, written reports, and structuring visual defenses matching university criteria.
+        """)
+    
     st.markdown("""
     Before deploying complex AI, we established a baseline using standard lexicons.
     **Hypothesis:** Is there a direct link between negative words and user engagement?

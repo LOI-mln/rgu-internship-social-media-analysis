@@ -7,9 +7,9 @@
 *Département Informatique, Institut Universitaire de Technologie, France*  
 *Email: m.loi@rgu.ac.uk*  
 
-**Dr. John Smith**  
+**Dr. Shahana Bano**  
 *School of Computing Science and Digital Media, Robert Gordon University, Aberdeen, United Kingdom*  
-*Email: j.smith4@rgu.ac.uk*  
+*Email: s.bano@rgu.ac.uk*  
 
 ---
 
