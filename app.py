@@ -235,26 +235,40 @@ if selected_page.startswith("1."):
     # Academic Project Scope & Acquired Skills Expanders (Flat Design, Emoji-free)
     with st.expander("Project Objectives & Technical Scope", expanded=False):
         st.markdown("""
-        *   **Dataset Expansion & Metadata Design**: Ingest data from Reddit, YouTube, Twitter, and Instagram, designing a clean and standardized three-layer metadata schema.
+        *   **Dataset Expansion & Metadata Design**: Ingest data from Reddit, YouTube, Twitter, and Instagram, designing a clean and standardized three-layer metadata schema. 
+            *   *Delivered Work*: [youtube_dataset_fetcher.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/acquisition/youtube_dataset_fetcher.py), [reddit_dataset_fetcher.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/acquisition/reddit_dataset_fetcher.py)
         *   **Engagement & Metadata Analytics**: Evaluate the correlation between lexical negativity and user engagement metrics (such as scores, likes, and replies).
+            *   *Delivered Work*: [youtube_cleaned.csv](file:///Users/milan/projects/rgu-internship-social-media-analysis/data/cleaned/youtube_cleaned.csv), [reddit_political_cleaned.csv](file:///Users/milan/projects/rgu-internship-social-media-analysis/data/cleaned/reddit_political_cleaned.csv), [baseline_report_week2.md](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/baseline_report_week2.md)
         *   **Multimodal Workflow Prototyping**: Deploy a local vision-language pipeline (CLIP) to analyze text-image sémantic alignments and perform zero-shot classifications on satirical meme datasets.
+            *   *Delivered Work*: [clip_feature_extractor.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/nlp/clip_feature_extractor.py), [evaluate_alignment.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/nlp/evaluate_alignment.py)
         *   **Hashtag Co-occurrence Networks**: Construct weighted, undirected hashtag networks under NetworkX, computing PageRank, degree, and betweenness centralities.
+            *   *Delivered Work*: [hashtag_network_analysis.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/network/hashtag_network_analysis.py), [hashtag_network.html](file:///Users/milan/projects/rgu-internship-social-media-analysis/deliverables/hashtag_network.html)
         *   **Direct Interaction Topologies**: Merge cross-platform replies and mentions into a directed graph to model and detect structural echo chambers using Louvain modularity.
+            *   *Delivered Work*: [cross_platform_network.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/network/cross_platform_network.py), [cross_platform_merged.gml](file:///Users/milan/projects/rgu-internship-social-media-analysis/deliverables/week_5/cross_platform_merged.gml), [layout_positions.json](file:///Users/milan/projects/rgu-internship-social-media-analysis/deliverables/week_5/layout_positions.json) (Navigate to page *2. Echo Chambers Network*)
         *   **Linguistic Mapping & Toxicity Evaluation**: Track in-group/out-group tribalism (We/Them pronoun counts) intersected with Google Perspective API toxicity scores.
+            *   *Delivered Work*: [week6_polarization.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/nlp/week6_polarization.py), [community_polarization_metrics.csv](file:///Users/milan/projects/rgu-internship-social-media-analysis/deliverables/week_6/community_polarization_metrics.csv) (Navigate to page *3. Polarization & Toxicity*)
         *   **Cross-Platform Comparison Dashboard**: Construct a scientific comparative dashboard in Streamlit to integrate all network and discursive metrics.
-        *   **Comparative Analysis & Time Series**: Produce platform-level tables (engagement, toxicity, topic density) and monthly timeline area plots.
+            *   *Delivered Work*: [app.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/app.py) (Navigate to page *4. Cross-Platform Metrics*)
         *   **Academic Research Reporting**: Draft and compile formal reports (documenting research methods, mathematical formulations, limitations, and future steps).
+            *   *Delivered Work*: [Rapport_de_Stage_Milan_Loi.md](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/Rapport_de_Stage_Milan_Loi.md), [RGU_Research_Paper_Polarization.md](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/RGU_Research_Paper_Polarization.md)
         """)
         
     with st.expander("Developed Academic & Technical Skills", expanded=False):
         st.markdown("""
         1.  **Multi-Platform Data Ingestion**: Safe data harvesting practices incorporating API rate limits, authentication, and robust handling.
+            *   *Associated Script*: [youtube_dataset_fetcher.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/acquisition/youtube_dataset_fetcher.py), [reddit_dataset_fetcher.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/acquisition/reddit_dataset_fetcher.py)
         2.  **Metadata Analytics**: Processing complex engagement metrics, text properties, and timeline trends using Pandas and NumPy.
+            *   *Associated Code*: Unification algorithm in [app.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/app.py#L450-L519)
         3.  **Multimodal Deep Learning**: Integrating local vision-language models (CLIP PyTorch) and optimizing local hardware acceleration (MPS/CUDA).
+            *   *Associated Script*: [clip_feature_extractor.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/nlp/clip_feature_extractor.py)
         4.  **Social Network Analysis (SNA)**: Modeling, parsing, and exporting complex networks (GML formats) using NetworkX and Pyvis.
+            *   *Associated Script*: [hashtag_network_analysis.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/network/hashtag_network_analysis.py), [cross_platform_network.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/src/network/cross_platform_network.py)
         5.  **Community Partitioning**: Implementing modularity optimization (Louvain algorithm) and interpreting sociological echo chamber behaviors.
+            *   *Associated Math*: Modularity matrix in [RGU_Research_Paper_Polarization.md](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/RGU_Research_Paper_Polarization.md)
         6.  **Scientific Web Development**: Building responsive, hardware-optimized analytical dashboards in Streamlit (Plotly WebGL, caching, and custom CSS styling).
+            *   *Associated Design*: Plotly WebGL node trace calculations in [app.py](file:///Users/milan/projects/rgu-internship-social-media-analysis/app.py#L278-L340)
         7.  **Academic Communication**: Authoring formal research papers, written reports, and structuring visual defenses matching university criteria.
+            *   *Associated Report*: [Rapport_de_Stage_Milan_Loi.docx](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/Rapport_de_Stage_Milan_Loi.docx), [RGU_Research_Paper_Polarization.docx](file:///Users/milan/projects/rgu-internship-social-media-analysis/docs/RGU_Research_Paper_Polarization.docx)
         """)
     
     st.markdown("""
