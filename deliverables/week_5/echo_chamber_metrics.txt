@@ -1,10 +1,10 @@
-Week 5 - Echo Chamber & Graph Merge Metrics
-=============================================
-Total Nodes (Cross-platform): 20641
-Total Edges (Replies/Mentions): 18087
-Number of detected communities: 3484
-Modularity Score: 0.9539
+Week 5 - Echo Chamber & Graph Merge Metrics (Reddit & YouTube)
+=======================================================
+Total Core Nodes: 574
+Total Core Edges: 1188
+Number of detected communities: 5
+Modularity Score (Q): 0.6039
 
 Interpretation:
-- Modularity > 0.3 indicates strong community structure (potential echo chambers).
-- Directed edges represent the flow of replies/mentions across users and content.
+- Modularity > 0.3 indicates strong community structure.
+- Louvain community clustering partitions Reddit and YouTube participants into dense discussion clusters.

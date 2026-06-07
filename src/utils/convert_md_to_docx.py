@@ -1,5 +1,7 @@
 import os
 import re
+import subprocess
+import sys
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -27,6 +29,57 @@ def add_paragraph_borders(p):
     pbdr.append(bottom)
     pPr.append(pbdr)
 
+def add_page_number(run):
+    """Adds a page number field to a run."""
+    fldChar1 = OxmlElement('w:fldChar')
+    fldChar1.set(qn('w:fldCharType'), 'begin')
+    instrText = OxmlElement('w:instrText')
+    instrText.set(qn('xml:space'), 'preserve')
+    instrText.text = "PAGE"
+    fldChar2 = OxmlElement('w:fldChar')
+    fldChar2.set(qn('w:fldCharType'), 'separate')
+    fldChar3 = OxmlElement('w:fldChar')
+    fldChar3.set(qn('w:fldCharType'), 'end')
+    
+    r = run._r
+    r.append(fldChar1)
+    r.append(instrText)
+    r.append(fldChar2)
+    r.append(fldChar3)
+
+def convert_docx_to_pdf(docx_path, pdf_path):
+    """Uses macOS AppleScript to compile DOCX to PDF using Microsoft Word."""
+    abs_docx_path = os.path.abspath(docx_path)
+    abs_pdf_path = os.path.abspath(pdf_path)
+    
+    print(f"Compiling PDF from {abs_docx_path} using Microsoft Word...")
+    
+    applescript = f'''
+    tell application "Microsoft Word"
+        set docPath to POSIX file "{abs_docx_path}"
+        set pdfPath to POSIX file "{abs_pdf_path}"
+        open docPath
+        set activeDoc to active document
+        save as activeDoc file name pdfPath file format format PDF
+        close activeDoc saving no
+    end tell
+    '''
+    
+    try:
+        process = subprocess.run(
+            ['osascript', '-e', applescript],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=45
+        )
+        if process.returncode == 0:
+            print(f"PDF successfully generated at: {abs_pdf_path}")
+        else:
+            print(f"PDF conversion failed: {process.stderr}")
+    except Exception as e:
+        print(f"Error during PDF conversion: {e}")
+
 def parse_markdown_to_docx(md_path, docx_path):
     print(f"Reading markdown from: {md_path}")
     with open(md_path, 'r', encoding='utf-8') as f:
@@ -34,12 +87,15 @@ def parse_markdown_to_docx(md_path, docx_path):
 
     doc = Document()
 
-    # Define standard margins (2.5 cm or 1 inch standard medium margins)
+    # Define standard margins (2.54 cm or 1 inch standard medium margins)
     for section in doc.sections:
         section.top_margin = Inches(1.0)
         section.bottom_margin = Inches(1.0)
         section.left_margin = Inches(1.0)
         section.right_margin = Inches(1.0)
+        
+        # Enable different headers and footers for the first page (cover page)
+        section.different_first_page_header_footer = True
         
         # Configure standard page header
         header = section.header
@@ -49,6 +105,23 @@ def parse_markdown_to_docx(md_path, docx_path):
         hp.runs[0].font.name = 'Calibri'
         hp.runs[0].font.size = Pt(8.5)
         hp.runs[0].font.color.rgb = RGBColor(120, 120, 120)
+
+        # Configure standard page footer (with page numbering)
+        footer = section.footer
+        fp = footer.paragraphs[0]
+        fp.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        fp.paragraph_format.tab_stops.add_tab_stop(Inches(6.5), 2)  # Right tab stop at 6.5 inches
+        
+        run_text = fp.add_run("Milan LOI | ÉTUDE DE LA POLARISATION DISCURSIVE\t")
+        run_text.font.name = 'Calibri'
+        run_text.font.size = Pt(8.5)
+        run_text.font.color.rgb = RGBColor(120, 120, 120)
+        
+        run_page = fp.add_run()
+        run_page.font.name = 'Calibri'
+        run_page.font.size = Pt(8.5)
+        run_page.font.color.rgb = RGBColor(120, 120, 120)
+        add_page_number(run_page)
 
     # Configure base font style to Calibri 11
     style = doc.styles['Normal']
@@ -68,6 +141,11 @@ def parse_markdown_to_docx(md_path, docx_path):
     while idx < len(lines):
         line = lines[idx]
         stripped = line.strip()
+
+        # Skip Table of Contents placeholder in markdown (automated TOC will be injected)
+        if "L'IUT de Limoges exige" in stripped or (stripped.startswith("[") and stripped.endswith("]")):
+            idx += 1
+            continue
 
         # Handle code blocks
         if stripped.startswith("```"):
@@ -133,7 +211,6 @@ def parse_markdown_to_docx(md_path, docx_path):
                     row_obj = t.rows[r_idx + 1]
                     for c_idx, val in enumerate(row_cells):
                         if c_idx < len(row_obj.cells):
-                            # Replace italic markdown inside table cell
                             clean_val = val.replace('**', '').replace('*', '')
                             row_obj.cells[c_idx].text = clean_val
                             row_obj.cells[c_idx].paragraphs[0].runs[0].font.size = Pt(9.5)
@@ -145,13 +222,20 @@ def parse_markdown_to_docx(md_path, docx_path):
             
             table_rows = []
             in_table = False
-            # Do not skip the current line! We process it normally
             continue
 
-        # Handle page breaks
-        if stripped == "---" or stripped == '<div style="page-break-after: always;"></div>':
-            doc.add_page_break()
-            cover_page = False
+        # Handle page breaks (only separate the cover page, ignore thematic breaks in body)
+        if stripped == "---" or stripped == '***':
+            if cover_page:
+                # Toggle cover page flag, but do NOT add a page break here.
+                # The first heading (# REMERCIEMENTS) will automatically add a page break,
+                # preventing a blank page.
+                cover_page = False
+            idx += 1
+            continue
+
+        # Ignore manual HTML page breaks to let layout flow naturally
+        if stripped == '<div style="page-break-after: always;"></div>':
             idx += 1
             continue
 
@@ -167,11 +251,25 @@ def parse_markdown_to_docx(md_path, docx_path):
                 level = len(match.group(1))
                 title = match.group(2)
                 
-                # Bold Heading 1 starts on a new page (except the main title on the cover page)
+                # Heading 1 starts on a new page/section (except main title on the cover page)
                 if level == 1 and not cover_page:
-                    doc.add_page_break()
+                    # Specific requirement: pagination stops at the conclusion.
+                    # Section 6 (Auto-évaluation) and subsequent chapters are in a new section without page numbers.
+                    if title.startswith("6. AUTO-ÉVALUATION"):
+                        new_section = doc.add_section()
+                        new_section.footer.is_linked_to_previous = False
+                        fp = new_section.footer.paragraphs[0]
+                        fp.text = ""
+                        fp.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                        run_text = fp.add_run("Milan LOI | ÉTUDE DE LA POLARISATION DISCURSIVE")
+                        run_text.font.name = 'Calibri'
+                        run_text.font.size = Pt(8.5)
+                        run_text.font.color.rgb = RGBColor(120, 120, 120)
+                        
+                        new_section.header.is_linked_to_previous = True
+                    else:
+                        doc.add_page_break()
                 
-                # Add Heading with custom sizes
                 if level == 1:
                     heading_size = Pt(18)
                     heading_bold = True
@@ -190,15 +288,34 @@ def parse_markdown_to_docx(md_path, docx_path):
                 run.bold = heading_bold
                 run.font.size = heading_size
                 run.font.name = 'Calibri'
-                
-                # Apply sapphire blue color to headings
-                run.font.color.rgb = RGBColor(59, 130, 246)
+                run.font.color.rgb = RGBColor(59, 130, 246) # Sapphire Blue
                 
                 if level == 1 and cover_page:
-                    # Centered Title for Cover Page
                     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                     run.font.size = Pt(22)
-            
+                
+                # If we just added the SOMMAIRE heading, inject the Word field code for an automated TOC
+                if title == "SOMMAIRE":
+                    toc_p = doc.add_paragraph()
+                    toc_p.paragraph_format.space_after = Pt(12)
+                    run_toc = toc_p.add_run()
+                    
+                    fldChar1 = OxmlElement('w:fldChar')
+                    fldChar1.set(qn('w:fldCharType'), 'begin')
+                    instrText = OxmlElement('w:instrText')
+                    instrText.set(qn('xml:space'), 'preserve')
+                    instrText.text = 'TOC \\o "1-3" \\h \\z \\u'
+                    fldChar2 = OxmlElement('w:fldChar')
+                    fldChar2.set(qn('w:fldCharType'), 'separate')
+                    fldChar3 = OxmlElement('w:fldChar')
+                    fldChar3.set(qn('w:fldCharType'), 'end')
+                    
+                    r = run_toc._r
+                    r.append(fldChar1)
+                    r.append(instrText)
+                    r.append(fldChar2)
+                    r.append(fldChar3)
+
             idx += 1
             continue
 
@@ -206,18 +323,16 @@ def parse_markdown_to_docx(md_path, docx_path):
         is_list = stripped.startswith("* ") or stripped.startswith("- ") or (stripped.startswith("1. ") or stripped.startswith("2. ") or stripped.startswith("3. ") or stripped.startswith("4. ") or stripped.startswith("5. "))
         
         p = doc.add_paragraph()
-        p.paragraph_format.line_spacing = 1.15
+        p.paragraph_format.line_spacing = 1.0 # Interligne simple
         p.paragraph_format.space_after = Pt(6)
         
         if is_list:
             p.paragraph_format.left_indent = Inches(0.4)
             if stripped.startswith("* ") or stripped.startswith("- "):
-                # bullet point
                 bullet_run = p.add_run("•  ")
                 bullet_run.bold = True
                 content = stripped[2:]
             else:
-                # numbered list
                 num_match = re.match(r'^(\d+\.)\s+(.*)$', stripped)
                 if num_match:
                     num_run = p.add_run(f"{num_match.group(1)}  ")
@@ -236,14 +351,12 @@ def parse_markdown_to_docx(md_path, docx_path):
                 p.paragraph_format.space_before = Pt(8)
                 p.paragraph_format.space_after = Pt(8)
                 
-            # If on the cover page, center paragraphs and space them
             if cover_page:
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 p.paragraph_format.space_before = Pt(4)
                 p.paragraph_format.space_after = Pt(4)
 
         # Parse inline markdown formatting (bold **, italic *)
-        # simple parsing of **bold** and *italic*
         tokens = re.split(r'(\*\*.*?\*\*|\*.*?\*|\$.*?\$)', content)
         for token in tokens:
             if token.startswith("**") and token.endswith("**"):
@@ -267,8 +380,6 @@ def parse_markdown_to_docx(md_path, docx_path):
     doc.save(docx_path)
     print("DOCX successfully generated.")
 
-import sys
-
 if __name__ == "__main__":
     if len(sys.argv) > 2:
         md_path = sys.argv[1]
@@ -278,4 +389,7 @@ if __name__ == "__main__":
         docx_path = "docs/Rapport_de_Stage_Milan_Loi.docx"
         
     parse_markdown_to_docx(md_path, docx_path)
-
+    
+    # Compile to PDF using Word AppleScript
+    pdf_path = docx_path.replace(".docx", ".pdf")
+    convert_docx_to_pdf(docx_path, pdf_path)

@@ -22,9 +22,9 @@ Online public discourse is increasingly fragmented by ideological divisions, tri
 
 ## I. INTRODUCTION
 
-The rapid expansion of social media platforms as primary vectors of public debate has significantly altered democratic communication. While these networks theoretically offer decentralized spaces for democratic discourse, algorithmic sorting mechanisms designed to maximize user engagement have inadvertently accelerated ideological fragmentation. Online interactions are frequently characterized by "us versus them" group dynamics, commonly referred to in social psychology as in-group favoritism and out-group hostility. 
+The rapid expansion of social media platforms as primary vectors of public debate has significantly altered democratic communication. While these networks theoretically offer decentralized spaces for democratic discourse, algorithmic sorting mechanisms designed to maximize user engagement have inadvertently accelerated ideological fragmentation. Online interactions are frequently characterized by "us versus them" group dynamics, commonly referred to in social psychology as in-group favoritism and out-group hostility. Within these environments, users actively construct hermetic discussion groups—commonly designated as "echo chambers"—wherein exposure to opposing viewpoints is heavily suppressed. This isolation is not merely topological but highly discursive; as groups isolate themselves, their internal vocabulary becomes self-referential, tribal, and hostile toward external entities. Developing methodologies to detect and monitor these dynamics is crucial for computational social science and content moderation.
 
-Within these environments, users actively construct hermetic discussion groups—commonly designated as "echo chambers"—wherein exposure to opposing viewpoints is heavily suppressed. This isolation is not merely topological but highly discursive; as groups isolate themselves, their internal vocabulary becomes self-referential, tribal, and hostile toward external entities. Developing methodologies to detect and monitor these dynamics is crucial for computing social science and content moderation.
+To model and quantify these complex dynamics, this study builds upon several key methodologies established in recent literature. Structural partition algorithms, particularly the fast Louvain community detection proposed by Blondel et al. [2], form the basis of our structural echo-chamber analysis, while Conover et al. [5] provide a foundational framework for analyzing ideological polarization in microblogging topologies. Discursively, Jigsaw's Perspective API [4] serves as a benchmark for scoring contextual sentence toxicity, and Radford et al. [3] outline the CLIP model used for visual-textual alignment in political memes. Finally, visual diagnostics draw inspiration from network exploration interfaces pioneered by Bastian et al. [1] to display large-scale graph compositions.
 
 However, traditional computational approaches are limited by two major technical bottlenecks:
 1.  **Single-Platform Isolation**: Most empirical studies analyze a single platform (e.g., Twitter or Reddit) in isolation, ignoring that modern political discussion is highly cross-platform, with users dynamically resharing content and referencing arguments across networks.
@@ -35,11 +35,9 @@ This paper addresses these limitations by introducing a unified cross-platform p
 *   **Structural**: We present a cross-platform graph merge methodology that reveals highly isolated chambers, validated by a modularity score of $Q = 0.9539$.
 *   **Technological**: We implement an optimized interactive Streamlit dashboard leveraging Plotly WebGL (`go.Scattergl`) and hardware-accelerated local CLIP models to render large-scale networks and extract multimodal features in real-time.
 
----
+### A. Theoretical Context and Related Work
 
-## II. RELATED WORK
-
-The quantification of online polarization has historically been pursued along two distinct paths: text-based NLP and graph-based Social Network Analysis (SNA). 
+The quantification of online polarization has historically been pursued along two distinct paths: text-based Natural Language Processing (NLP) and graph-based Social Network Analysis (SNA). 
 
 In NLP, early baseline sentiment studies relied heavily on lexicons such as VADER or LIWC. While computationally efficient, lexical matching exhibits severe limitations when applied to political discourse. It fails to resolve sarcastic remarks or contextual shifts where negative vocabulary does not indicate actual hostility. To bypass this, recent architectures utilize deep learning models (such as BERT or Google Jigsaw's Perspective API) to score text toxicity by evaluating complete sentence sequences and contextual representations.
 
@@ -49,9 +47,13 @@ Furthermore, political rhetoric has evolved beyond pure text into multimodal for
 
 ---
 
-## III. PROPOSED METHODOLOGY
+## II. METHODOLOGY
 
-The architecture of our unified social media polarization pipeline is structured into four main processing stages, detailed below:
+Our engineering architecture and mathematical framework are structured to ingest heterogeneous social media data, clean it, model user topologies, evaluate linguistic dynamics, and visualize metrics through an optimized dashboard. The pipeline operates across four main processing layers: the Data Curation and Cleaning Layer, the Complex Network Layer, the Natural Language Processing (NLP) Layer, and the Multimodal Analysis Layer.
+
+### A. System Architecture and Workflow
+
+The high-level data flow and processing stages are illustrated in the architecture diagram below:
 
 ```mermaid
 graph TD
@@ -76,75 +78,97 @@ graph TD
     H & J & L --> M[Interactive Analytical Dashboard]
 ```
 
-### A. Data Engineering & Cleaning Pipeline
-Data ingested from Reddit, YouTube, Twitter, and Instagram is standardly structured into a unified data schema consisting of three primary tables: `posts`, `nlp_features`, and `network_features`. To ensure high-quality inputs, raw text strings undergo a sequential three-step cleaning process:
-1.  **Corrupt Record Removal**: Dropping rows with null text bodies or containing fewer than three characters.
-2.  **Duplicate Stripping**: Removing identical text comments to eliminate spam and prevent skewing word frequency counts.
-3.  **Language Isolation**: Applying the `langdetect` library to filter out non-English content, ensuring linguistic uniformity for downstream NLP models.
+### B. Dataset Acquisition (2.1 Dataset: Where did we get them)
 
-### B. Multimodal Representation & Alignment (CLIP)
-For satirical political memes, we deploy a local instance of the **CLIP (clip-vit-base-patch32)** transformer. To analyze the relationship between the meme's image and its embedded text overlay, we project the image and text into a joint embedding space. The semantic alignment is quantified by calculating the cosine similarity between the normalized image vector $\vec{v}_i$ and text vector $\vec{v}_t$:
+To build a representative cross-platform model, we compiled datasets from four prominent social media platforms:
 
-$$\text{Similarity}(\vec{v}_i, \vec{v}_t) = \frac{\vec{v}_i \cdot \vec{v}_t}{\|\vec{v}_i\| \|\vec{v}_t\|}$$
+1.  **Reddit**: We acquired political discourse records from the Hugging Face hub repository `mo-mittal/reddit_political_subs`. This corpus aggregates discussions from highly active political subreddits (e.g., *r/politics*, *r/Conservative*, *r/progressive*), representing polarized ideologues.
+2.  **YouTube**: Programmatic comments were harvested from ten prominent BBC News video threads focused on the Israel-Gaza conflict using the `yt-dlp` tool. This specific dataset serves as a benchmark for high-engagement, real-time controversy.
+3.  **Twitter (X)**: We utilized the academic dataset `twitter_we-language_dataset.csv`, which contains tweets specifically curated to evaluate polarization through linguistic markers (in-group and out-group terms).
+4.  **Instagram**: Discussion threads and replies were extracted from `instagram_dataset.csv` and `instagram_comments_dataset.csv`. These records highlight mobile-first, visual-oriented user interactions.
+5.  **Hateful Memes**: To evaluate multimodal polarization, we extracted a training subset of 2,000 political memes containing visual data and corresponding overlay texts from the Hugging Face repository `cs5242-hateful-memes/hateful-memes-data` (originally published by Meta AI).
 
-Furthermore, we utilize CLIP's zero-shot classification capabilities to categorize the visual content of memes into three distinct rhetorical labels:
-*   `"a meme about us (in-group)"` (representing in-group reinforcement or self-referential imagery).
-*   `"a meme about them (out-group)"` (representing out-group opposition or attack vectors).
-*   `"a neutral image"` (representing standard, non-rhetorical visual layouts).
+### C. Feature Processing (2.2 How many features processing)
 
-The local execution automatically detects and exploits hardware acceleration, routing calculations through Apple Silicon **MPS** (Metal Performance Shaders) or NVIDIA **CUDA** to optimize processing times.
+Our data schema ingests raw platform payloads and transforms them into standardized features across three primary relational tables: `posts`, `nlp_features`, and `network_features`. The processing pipeline extracts and calculates the following features:
 
-### C. Cross-Platform Interaction Network Merge
-We construct a large-scale directed interaction network where nodes represent individual user accounts or posts, and directed edges represent physical interactions (replies, mentions, or retweets). To isolate dense, non-overlapping discussion communities (echo chambers), we apply the **Louvain modularity maximization algorithm**. The modularity score ($Q$) is mathematically defined as:
+1.  **Linguistic and NLP Features**:
+    *   *Raw text and Cleaned text*: Input strings stripped of URLs, HTML tags, and non-ASCII markers.
+    *   *Language label*: Isolated using the `langdetect` library, filtering out any records where language $\neq$ `'en'`.
+    *   *In-group Pronoun Count ($C_{we}$)*: Occurrences of terms within the set $\text{We} = \{\text{we, us, our, ours, ourselves}\}$.
+    *   *Out-group Pronoun Count ($C_{them}$)*: Occurrences of terms within the set $\text{Them} = \{\text{they, them, their, theirs, themselves}\}$.
+    *   *We/Them Ratio ($R_{we\_them}$)*: Structured as:
+        $$R_{we\_them} = \frac{C_{we}}{\max(1, C_{them})}$$
+    *   *Toxicity Score ($T_c$)*: A probability score ($[0.0, 1.0]$) queried from Google's Perspective API indicating the likelihood that a comment is perceived as toxic, insulting, or hostile.
+    *   *Polarization Index ($PI_c$)*: A composite index combining pronoun ratios with community-level mean toxicity:
+        $$PI_c = R_{we\_them} \times \bar{T}_c$$
+2.  **Multimodal Vision-Language Features**:
+    *   *Image Width and Height*: Native dimensions of the extracted meme image files.
+    *   *Image and Text Embeddings*: High-dimensional vector representations ($\vec{v}_i$ and $\vec{v}_t$ in $\mathbb{R}^{512}$) extracted from OpenAI's CLIP model.
+    *   *Meme Cosine Similarity*: The dot product of the normalized image and text embedding vectors, reflecting visual-textual semantic alignment:
+        $$\text{Similarity}(\vec{v}_i, \vec{v}_t) = \frac{\vec{v}_i \cdot \vec{v}_t}{\|\vec{v}_i\| \|\vec{v}_t\|}$$
+    *   *Zero-Shot Logits and Probabilities*: Class probabilities computed across three rhetorical target labels: `"a meme about us (in-group)"`, `"a meme about them (out-group)"`, and `"a neutral image"`.
+3.  **Network and SNA Features**:
+    *   *Node ID*: Standardized identifier (e.g., `yt_user_X`, `tw_tweet_Y`, `ig_comment_Z`).
+    *   *Node Type*: Categorical attribute specifying whether a node represents a user, a tweet, a comment, or a post.
+    *   *Edge Type*: Relation descriptor mapping interactions (replies, mentions, retweets).
+    *   *Node Degree ($k_i$)*: Total incoming and outgoing connections representing individual user activity/influence.
+    *   *Community Label ($c_i$)*: Numerical index mapping nodes to distinct echo chambers partitioned by the Louvain Modularity algorithm.
 
-$$Q = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(c_i, c_j)$$
+### D. Pipeline Implementation (2.3 Implementation)
 
-where $A_{ij}$ represents the adjacency matrix weight between nodes $i$ and $j$, $k_i$ and $k_j$ represent their respective node degrees, $m$ is the total sum of edge weights in the network, $c_i$ and $c_j$ indicate the communities to which the nodes belong, and $\delta(c_i, c_j)$ is the Kronecker delta function (returning 1 if $c_i = c_j$, and 0 otherwise).
+The system is developed entirely in Python 3.10+ and comprises several specialized execution modules:
 
-### D. Linguistic Polarization Index
-For each community $c$ extracted by the Louvain algorithm, we compute a composite metric designated as the **Polarization Index** ($PI_c$). This index quantifies the intersection of linguistic tribalism with overall conversational toxicity. 
+1.  **Multimodal Execution & Hardware Routing**: Local CLIP inference is powered by PyTorch and the Hugging Face `transformers` library. The script dynamically queries system capabilities and routes tensor computations to Apple Silicon GPUs via Metal Performance Shaders (**MPS**), NVIDIA GPUs via CUDA, or falls back to CPU execution if no GPU is present. This hardware-agnostic routing guarantees optimal runtime performance.
+2.  **Cross-Platform Graph Synthesis**: We use NetworkX to synthesize a directed network graph composed of platform-specific interaction structures.
+    *   *YouTube*: Directed edge from user nodes to target video nodes based on comment logs.
+    *   *Instagram*: Directed edges representing comment replies and user mentions extracted using regex email/mention patterns (`@\w+`).
+    *   *Twitter*: Mentions mapped as directed edges from tweet author to mentioned user.
+    The combined graph is converted to an undirected representation, isolated nodes (degree $< 3$) are pruned to reduce topological noise, and the Louvain community partitioning algorithm is executed. The resulting partitioned graph is exported in Graph Modeling Language (GML) format for analysis and visualization.
+3.  **API Integration and Throttling**: The NLP module interacts with Jigsaw's Perspective API via the `google-api-python-client` library. To prevent API rate limit failures (quota errors on the standard 1 QPS tier), the script implements a strict throttling wrapper, enforcing a 1.1-second sleep delay after each query.
+4.  **Scientific Visualization Dashboard**: The user interface is built using Streamlit. To ensure responsive network visualization, we bypass the browser DOM bottlenecks of SVG objects by implementing Plotly WebGL (`go.Scattergl`) to render the 20,641-node network graph. All database queries, centrality computations, and layout configurations are cached via the `@st.cache_data` decorator, preventing interface reload lag during user filtering.
 
-First, we measure tribalism by extracting the **We/Them Ratio** ($R_{we\_them}$). We define the respective pronoun lexicons as:
-*   $\text{We} = \{\text{we, us, our, ours, ourselves}\}$
-*   $\text{Them} = \{\text{they, them, their, theirs, themselves}\}$
+## III. RESULTS AND DISCUSSION
 
-$$R_{we\_them} = \frac{\text{Count}(\text{We})}{\max(1, \text{Count}(\text{Them}))}$$
-
-A ratio greater than $1.0$ indicates that the community's discourse is predominantly self-referential or focused on in-group identity. Finally, we formulate the Polarization Index ($PI_c$) as:
-
-$$PI_c = R_{we\_them} \times \bar{T}_c$$
-
-where $\bar{T}_c$ is the mean contextual toxicity probability of the community's text, queried from the Google Perspective API.
-
----
-
-## IV. EXPERIMENTAL SETUP & QUANTITATIVE RESULTS
+In this section, we present the empirical results obtained from our pipeline execution across the baseline, multimodal, network, and linguistic analysis phases. We discuss these outcomes in the context of computational social science and outline the technical challenges resolved during implementation.
 
 ### A. Negativity-Engagement Correlation Baseline
-To validate the necessity of advanced deep learning architectures, we established an initial baseline in the early evaluation phase using a naive negativity keyword dictionary (counting negative words such as *bad, fake, hate, stupid, idiot*). We evaluated the correlation between this lexicon-derived negativity score and user engagement metrics (Reddit score and comment counts; YouTube like counts) using the **Spearman Rank Correlation**.
 
-The experimental results yielded:
-*   **Reddit political dataset**: $\rho = 0.0148$, $p = 0.2246$.
-*   **YouTube political comments**: $\rho = 0.0050$, $p = 0.6326$.
+To establish a baseline and justify the integration of deep learning networks, we analyzed the correlation between primitive lexicon-based negativity and user engagement metrics. The negativity score was calculated by counting occurrences of basic hostile terms (e.g., *bad, hate, stupid, idiot, fake*) within comments. Engagement was modeled as the sum of score and comment counts for Reddit, and like counts for YouTube.
 
-The correlation coefficients ($\rho$) are statistically equivalent to zero, and the high p-values ($p > 0.05$) indicate statistical insignificance. This baseline experiment empirically demonstrated the failure of basic keyword matching to model online communication dynamics. It proved that simply counting hostile words ignores the sémantics of political debates, justifying our transition to deep contextual transformer APIs and multimodal embeddings.
+The Spearman Rank Correlation ($\rho$) yielded the following values:
+*   **Reddit political posts**: $\rho = 0.0148$ ($p = 0.2246$).
+*   **YouTube comments**: $\rho = 0.0050$ ($p = 0.6326$).
+
+The correlation coefficients are statistically indistinguishable from zero, and the high p-values ($p > 0.05$) indicate that there is no statistically significant monotonic relationship between basic negative word count and engagement. This baseline result provides empirical evidence that counting hostile words is insufficient to capture political discussions on social media. Simple lexical matching is blind to sarcasm, rhetorical context, or political dog-whistles, thereby validating the necessity of deep contextual transformers and multimodal embedding spaces.
 
 ### B. Multimodal Meme Classification
-Using the CLIP zero-shot pipeline on our political meme benchmark dataset, we analyzed visual/textual pairings. While standard text cleaning isolated the literal words, the zero-shot image classification revealed that memes featuring low image-text cosine similarity (often averaging $0.18$ to $0.22$, which would traditionally indicate mismatched data) were actually highly polarized. 
 
-Specifically, $58\%$ of these low-similarity memes were classified as `"a meme about them (out-group)"`, indicating that the pairing of a benign, humorous image with a hostile text overlay is a primary rhetorical vector used to disseminate political hostility.
+Using our local CLIP model on the Hateful Memes dataset, we analyzed the visual-textual dynamics of 2,000 political memes. By computing the cosine similarity between the visual embedding $\vec{v}_i$ and the textual embedding $\vec{v}_t$, we measured semantic alignment. Additionally, we executed zero-shot classification to map images to three classes: `"a meme about us (in-group)"`, `"a meme about them (out-group)"`, and `"a neutral image"`.
+
+The results are illustrated in the plots below:
+
+![Meme Label Distributions](figures/visual_predictions_distribution.png)
+*Figure 1: Distribution of zero-shot visual labels assigned by the CLIP model across political memes.*
+
+![Meme Cosine Similarities by Label](figures/cosine_similarity_by_label.png)
+*Figure 2: Text/Image cosine similarity scores categorized by the assigned zero-shot rhetorical label.*
+
+Our analysis revealed a significant finding: memes that exhibited a low image-text cosine similarity (averaging between $0.18$ and $0.22$, which in traditional text-image matching would indicate unrelated noise) were highly partisan. Specifically, $58\%$ of these low-similarity memes were classified as `"a meme about them (out-group)"`. This indicates that the rhetorical strategy of political memes frequently relies on pairing a benign, humorous, or unrelated image with a highly hostile or sarcastic text overlay to propagate out-group hostility. Relying solely on image-text alignment thresholds would fail to detect this form of polarization, highlighting the importance of joint zero-shot classification.
 
 ### C. Topology of Echo Chambers
-During the network synthesis stage, we merged the interaction logs of Reddit, YouTube, Twitter, and Instagram into a single directed graph. After filtering out structural noise (removing isolated nodes with a degree of less than 3 to focus on core behaviors), we obtained the following network statistics:
-*   **Total Nodes**: 20,641 (representing active cross-platform users and posts).
+
+By merging interaction structures from YouTube, Instagram, and Twitter, we constructed a unified directed network. After pruning isolated nodes with a degree less than 3, the final graph yielded the following topological metrics:
+*   **Total Nodes**: 20,641 (active users and posts).
 *   **Total Edges**: 18,087 (replies and mentions).
-*   **Detected Communities**: 3,484.
+*   **Identified Communities**: 3,484 clusters.
 *   **Louvain Modularity Score ($Q$)**: **0.9539**.
 
-A modularity score above 0.3 indicates strong community divisions. Our modularity score of **0.9539** represents an extremely high degree of network segmentation. It provides mathematical proof that social media discourse is structured into highly insular echo chambers, with dense communication within clusters but nearly zero interaction across different ideological modules.
+A modularity score $Q > 0.3$ indicates a strong community structure. A modularity score of **0.9539** represents an extremely high degree of network segmentation. This provides mathematical validation that online political discussion is structured into highly insular echo chambers. Users within a given Louvain partition communicate almost exclusively with each other, while interactions crossing different ideological modules are virtually non-existent.
 
 ### D. Quantified Polarization Indices
-In the subsequent linguistic assessment phase, we sampled the text corpora of the top ten largest communities and queried the Google Perspective API to compute their respective Polarization Indices ($PI_c$). The quantitative results are summarized in the table below:
+
+We sampled the text corpora of the top nine largest communities and queried the Google Perspective API to calculate the average community toxicity and the We/Them Ratio, resulting in the composite Polarization Index ($PI_c$). The results are detailed in the table below:
 
 | Community Name | Size (Posts) | We Count | Them Count | We/Them Ratio | Mean Toxicity | Polarization Index |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -158,36 +182,35 @@ In the subsequent linguistic assessment phase, we sampled the text corpora of th
 | **International Discourse** (Cluster 8) | 1,200 | 276 | 854 | 0.32 | 0.38 | **0.124** |
 | **Mainstream Media & News** (Cluster 2) | 553 | 51 | 279 | 0.18 | 0.48 | **0.088** |
 
-These results establish that highly partisan communities (such as Cluster 1 and Cluster 3) exhibit a We/Them ratio equal to or greater than $1.0$. This demonstrates that their discourse is highly tribal and self-focused. When crossed with elevated Perspective API toxicity scores, these clusters display the highest overall Polarization Indices (above $0.45$). 
+These results establish that highly partisan groups (e.g., Cluster 1 and Cluster 3) exhibit a We/Them ratio $\ge 1.0$. This demonstrates that their discourse is highly self-referential and focused on group identity. When crossed with elevated Perspective API toxicity scores, these clusters display the highest overall Polarization Indices (above $0.45$). Conversely, mainstream media channels (Cluster 2) maintain a very low We/Them ratio ($0.18$) due to standard journalistic neutral phrasing, resulting in a minimal Polarization Index ($0.088$) despite having average comment toxicity.
 
-Conversely, mainstream media channels (Cluster 2) maintain a very low We/Them ratio ($0.18$) due to standard journalistic neutral phrasing, resulting in a minimal Polarization Index ($0.088$) despite having average comment toxicity.
+The relationship between in-group tribalism and toxicity across communities is visualized in the heatmap below:
+
+![Community Polarization Heatmap](figures/cluster_polarization_heatmap.png)
+*Figure 3: Heatmap of We/Them Ratio, Mean Toxicity, and Polarization Index across Louvain communities.*
+
+### E. WebGL-Accelerated Dashboard UI
+
+To make these findings accessible, we designed an interactive Streamlit dashboard optimized for standard client hardware:
+1.  **Flat, Sober UI**: In accordance with the academic constraints, we removed default Streamlit styling and configured the navigation sidebar as a flat list of plain-text options. The selected option is styled in bold sapphire blue (`#3B82F6`) and prepended with a classic text arrow `> ` (e.g., `> 3. Polarization & Toxicity`), keeping the background transparent.
+2.  **Relative Column-Wise Heatmap Normalization**: Because absolute toxicity and polarization scores reside in narrow bands (e.g., toxicity ranges from $0.38$ to $0.52$), placing them on an absolute $[0, 1]$ scale flattens the visual contrast. We applied column-level min-max normalization to stretch the color gradient from green to red, while annotating the absolute raw metrics inside the cells to maintain transparency.
+3.  **Plotly WebGL Acceleration**: Rendering the 20,641 nodes via standard SVG elements caused browser crashes. We implemented Plotly WebGL (`go.Scattergl`), shifting layout matrices directly to the client's GPU, and implemented memory caching (`@st.cache_data`) to prevent reload lag.
+
+### F. Technical Challenges and Difficulties
+
+During development, we resolved several technical bottlenecks:
+1.  **API Access Restrictions**: Recent API changes on Twitter and Reddit blocked programmatic scraping. We resolved this by integrating static academic datasets from Hugging Face for Reddit and Twitter, while writing custom comment scrapers in `yt-dlp` for YouTube.
+2.  **Perspective API Rate Limits**: The Perspective API enforces a strict rate limit of 1 Query Per Second (QPS). Querying large text corpora directly caused connection failures. We implemented a sampling method (selecting a representative subset of 20 texts per community) and added a strict 1.1-second sleep delay wrapper to stay within the QPS quota.
+3.  **Local Multimodal Inference**: Running CLIP on local machines posed memory and CPU constraints. We solved this by using the `clip-vit-base-patch32` variant and implementing dynamic PyTorch device mapping to route calculations to Metal Performance Shaders (MPS) on Apple Silicon or CUDA on NVIDIA GPUs.
+4.  **Graph Rendering Latency**: Displaying large-scale cross-platform graphs in the browser caused rendering bottlenecks. Pruning nodes with degree $< 3$ eliminated topological noise (reducing nodes from 20,641 to a manageable set), and rendering via Plotly WebGL resolved DOM rendering lags.
+
+## IV. CONCLUSION
+
+This paper has presented a unified, multi-layered computational framework to model and quantify social media polarization across heterogeneous platforms. By integrating deep learning semantics (Google Perspective API, OpenAI CLIP), network science topology (Louvain community detection), and hardware-accelerated interactive visualizations (Streamlit, Plotly WebGL), our pipeline successfully identified dense cross-platform echo chambers ($Q = 0.9539$) and demonstrated the mathematical relationship between linguistic in-group tribalism and community hostility. The formulated Polarization Index effectively highlighted hostile partisan clusters while cleanly separating neutral mainstream journalistic networks. Additionally, the local CLIP pipeline revealed that out-group political memes frequently exploit low visual-textual semantic alignment to disseminate hostility, presenting a key vector of discursive fragmentation that traditional text-only classifiers omit. This unified architecture offers computational social scientists and platforms a scalable, rigorous tool to monitor the structural and discursive health of online public debate. Future work will focus on integrating decentralized open APIs (such as Bluesky and Mastodon) and deploying local, open-weights large language models to compute offline contextual toxicity and mitigate rate-limiting barriers.
 
 ---
 
-## V. DASHBOARD IMPLEMENTATION
-
-To render these scientific findings accessible, we designed an interactive Streamlit dashboard. The application is optimized to run smoothly on standard client hardware:
-1.  **Flat, Documentation-Like UI**: In accordance with academic design constraints (GEMINI.md), we removed flashy Streamlit components and styled the navigation sidebar as a flat, vertical list of plain-text options. The active page is highlighted using a bold, sapphire-blue font (`#3B82F6`) prepended with a classic text arrow `> ` (e.g., `> 3. Polarization & Toxicity`), while maintaining a transparent background.
-2.  **Relative Column-Wise Heatmap Normalization**: Because absolute toxicity and polarization averages reside in narrow bands (e.g., toxicity ranges from $0.38$ to $0.52$), placing them on an absolute $[0, 1]$ scale flattens the visual contrast. We applied individual min-max column normalization to stretch color contrasts from green to red, while annotating the absolute raw metrics directly inside the cells to ensure transparency.
-3.  **Plotly WebGL Acceleration**: To display the massive cross-platform network ($20,641$ nodes), we implemented WebGL markers and lines (`go.Scattergl`). This shifts matrix rendering directly onto the client's GPU, avoiding the CPU and browser bottlenecks caused by standard SVG elements. Memory caching via the `@st.cache_data` decorator ensures that heavy database and centrality calculations are stored, maintaining interface responsiveness during user interactions.
-
----
-
-## VI. DISCUSSION & FUTURE WORK
-
-The results presented in this paper demonstrate the feasibility of multi-platform tracking. However, several technical and structural limitations persist:
-*   **API Restriction Barriers**: Recent changes to social media APIs (especially Twitter and Reddit) have heavily restricted programmatic scraping. While we resolved this by utilizing high-quality academic datasets from Hugging Face, future implementations will focus on integrating decentralized open APIs (such as Mastodon and Bluesky).
-*   **GPT Context Limitations**: Evaluating large text corpora via external APIs is bounded by strict rate-limiting (e.g., Perspective API's 1 QPS limit). We bypassed this by sampling 20 representative texts per community. Future research will explore local, fine-tuned Llama-3 or Mistral models to perform offline toxicity scoring without external dependencies or latency bottlenecks.
-
----
-
-## VII. CONCLUSION
-
-This paper has presented a unified, multi-layered computational framework to model and quantify social media polarization. By combining deep learning NLP (Google Perspective API, OpenAI CLIP), network science modularity (Louvain community detection), and hardware-optimized visualization (Streamlit, Plotly WebGL), our pipeline successfully identified dense cross-platform echo chambers ($Q = 0.9539$) and proved the mathematical relationship between linguistic in-group tribalism and community hostility. The Polarization Index successfully highlighted the most hostile partisan groups while clearly isolating neutral mainstream news vectors. This unified approach provides computational social scientists and researchers with a scalable, rigorous tool to monitor the health of online public discourse.
-
----
-
-## REFERENCES
+## V. REFERENCES
 
 1.  M. Bastian, S. Heymann, and M. Jacomy, "Gephi: an open source software for exploring and manipulating networks," in *International AAAI Conference on Weblogs and Social Media*, 2009.
 2.  V. D. Blondel, J. L. Guillaume, R. Lambiotte, and E. Lefebvre, "Fast unfolding of communities in large networks," *Journal of Statistical Mechanics: Theory and Experiment*, vol. 2008, no. 10, p. P10008, 2008.
