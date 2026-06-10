@@ -96,6 +96,30 @@ Avant le début du projet, les chercheurs de l'équipe travaillaient de façon i
 
 Mon travail consistait donc à transformer des concepts de recherche académique en un système logiciel unifié, performant et documenté.
 
+## 2.4. Missions Confiées et Compétences Visées
+
+Pour structurer ce travail de recherche et développement, une feuille de route claire a été définie, s'articulant autour de neuf missions principales :
+
+1. **Extension des jeux de données et modélisation des métadonnées** : Intégrer de nouvelles sources de données issues des différentes plateformes et concevoir un schéma de métadonnées propre et standardisé.
+2. **Analyse de l'engagement et des métadonnées** : Modéliser et analyser les corrélations entre les dynamiques d'engagement utilisateur et les traits discursifs (notamment la corrélation entre la négativité lexicale brute et l'engagement).
+3. **Prototypage d'analyse multimodale CLIP** : Mettre en œuvre et évaluer un flux de travail basé sur le modèle CLIP d'OpenAI pour mesurer l'alignement sémantique texte-image sur un échantillon d'images issues d'Instagram et de mèmes politiques.
+4. **Modélisation de réseaux de co-occurrence de hashtags** : Construire des graphes de co-occurrence de hashtags, calculer les métriques de centralité et de modularité pour cartographier les thématiques d'opposition.
+5. **Construction de graphes d'interactions et détection des chambres d'écho** : Modéliser les réseaux d'interactions physiques (réponses, mentions) entre utilisateurs et appliquer des algorithmes de partitionnement pour identifier des chambres d'écho hermétiques.
+6. **Cartographie de la polarisation ("Nous contre Eux") et de la toxicité** : Quantifier et représenter visuellement la prévalence des pronoms identitaires et le score de toxicité moyen au sein de chaque communauté et cluster thématique.
+7. **Création d'un module de comparaison inter-plateformes** : Développer un onglet d'analyse comparative globale au sein du tableau de bord afin de synthétiser les différences structurelles et sémantiques entre les réseaux.
+8. **Production de synthèses et visualisations comparatives** : Concevoir des représentations sous forme de tables et de graphiques (heatmaps, scatter plots) pour comparer la négativité, la toxicité, la densité des sujets et l'engagement.
+9. **Rédaction du rapport académique et valorisation des résultats** : Rédiger le rapport de synthèse scientifique détaillant la méthodologie, les résultats empiriques, les limites techniques et les perspectives d'évolution du logiciel.
+
+En parallèle de ces objectifs opérationnels, ce stage visait l'acquisition et le développement de sept compétences clés en science des données et en ingénierie de l'information :
+
+1. **Collecte de données inter-plateformes** : Pratiques et éthique de l'acquisition de données (YouTube, Reddit) dans le respect des contraintes d'API et de sécurité.
+2. **Analyse avancée des métadonnées sociales** : Évaluation des métriques d'engagement (profondeur des réponses, dynamiques temporelles de publication, analyse statistique des hashtags).
+3. **Traitement automatique et multimodal** : Manipulation de modèles de vision-langage profonds (CLIP) et extraction d'embeddings pour l'évaluation sémantique de mèmes en ligne.
+4. **Analyse de réseaux sociaux (SNA)** : Conception de graphes complexes de co-occurrence et d'interaction orientés utilisateurs.
+5. **Algorithmes de détection de communautés** : Implémentation et interprétation de partitions de réseaux complexes (modularité Louvain, chambres d'écho).
+6. **Développement de modules analytiques dans Streamlit** : Conception d'interfaces utilisateur interactives et performantes (Plotly WebGL, cache Streamlit) adaptées aux besoins de chercheurs non informaticiens.
+7. **Rédaction et vulgarisation académique** : Production de rapports scientifiques, de diaporamas de soutenance et d'articles de recherche (structure Méthodes, Résultats, Discussion, Limitations).
+
 ---
 
 # 3. CORPS DU RAPPORT : CONCEPTION ET COMPARAISON DES SOLUTIONS
@@ -187,16 +211,85 @@ Cette structuration temporelle et technique a garanti le respect strict des jalo
 
 <div style="page-break-after: always;"></div>
 
-## 4.1. Le Pipeline de Nettoyage et de Standardisation des Données
+## 4.1. Expansion des Jeux de Données et Schéma de Métadonnées
 
-La première étape de la réalisation logicielle a consisté à concevoir une classe robuste de prétraitement. Les données issues du web social comportent d'importantes impuretés (valeurs manquantes, doublons structurels induits par les retweets/reposts, messages dans des langues étrangères compliquant les modèles NLP).
+La première phase de réalisation a consisté à élargir nos sources d'acquisition afin de constituer un corpus cross-platform représentatif de la polarisation.
 
-Le pipeline de nettoyage implémenté réalise séquentiellement :
-1.  **Suppression des lignes corrompues** : Élimination systématique des enregistrements dont les champs textuels sont vides ou de longueur inférieure à 3 caractères.
-2.  **Déduplication sémantique** : Retrait des messages strictement identiques pour éviter les biais de surreprésentation dans les réseaux de hashtags.
-3.  **Filtrage linguistique dynamique** : Intégration de la bibliothèque `langdetect` afin d'isoler uniquement les contenus rédigés en langue anglaise (`'en'`), garantissant une parfaite cohérence pour les embeddings multimodaux et les requêtes de toxicité.
+### 4.1.1. Sources de Données et Collecte Multi-plateformes
 
-## 4.2. Analyse Multimodale des Mèmes Politiques via CLIP
+Cinq gisements de données distincts et complémentaires ont été intégrés au sein de notre base analytique :
+1. **Reddit** : Ingestion du dépôt Hugging Face `mo-mittal/reddit_political_subs`, regroupant les publications de subreddits politiquement marqués (*r/politics*, *r/Conservative*, *r/progressive*), fournissant un historique sur l'orientation partisane des utilisateurs.
+2. **YouTube** : Acquisition de commentaires sous dix vidéos de la chaîne d'information BBC News traitant du conflit Israël-Gaza, réalisée à l'aide de l'outil `yt-dlp`. Ce jeu de données fournit une base d'étude des réactions publiques en temps réel sur des thématiques internationales sensibles.
+3. **Twitter (X)** : Intégration du jeu de données académique `twitter_we-language_dataset.csv`, structuré spécifiquement pour l'étude des pronoms collectifs et du clivage linguistique.
+4. **Instagram** : Ingestion de jeux de données relationnels (`instagram_dataset.csv` et `instagram_comments_dataset.csv`) mettant en lumière les structures d'échanges d'une plateforme orientée vers le partage visuel et les commentaires de type "replies".
+5. **Mèmes Politiques** : Extraction d'une sous-partie de 2 000 mèmes politiques contenant des fichiers d'images et leurs textes en surimpression, provenant du dépôt Hugging Face `cs5242-hateful-memes/hateful-memes-data` (Meta AI).
+
+### 4.1.2. Architecture du Schéma de Métadonnées
+
+Pour unifier ces sources hétérogènes, nous avons modélisé et implémenté un schéma relationnel divisé en trois tables fonctionnelles standardisées :
+
+* **Table des Posts (Publications)** :
+  * `id` (VARCHAR) : Identifiant unique de la publication (ex. `yt_comment_123`, `rd_post_456`).
+  * `platform` (VARCHAR) : Label du réseau social d'origine (Reddit, YouTube, Twitter, Instagram).
+  * `author` (VARCHAR) : Identifiant ou pseudonyme de l'émetteur du message.
+  * `raw_text` (TEXT) : Contenu textuel d'origine sans modification.
+  * `timestamp` (DATETIME) : Date et heure de publication unifiées au fuseau UTC.
+  * `engagement` (INTEGER) : Score d'engagement consolidé (nombre de votes sur Reddit, mentions "J'aime" sur YouTube/Instagram).
+
+* **Table des NLP Features (Caractéristiques Linguistiques)** :
+  * `post_id` (VARCHAR, Clé étrangère) : Lien vers la publication.
+  * `cleaned_text` (TEXT) : Chaîne de caractères nettoyée, normalisée en minuscules, expurgée des URLs et balises HTML.
+  * `we_count` (INTEGER) : Fréquence absolue des pronoms collectifs fermés d'in-group (*we, us, our, ours, ourselves*).
+  * `them_count` (INTEGER) : Fréquence absolue des pronoms collectifs d'out-group (*they, them, their, theirs, themselves*).
+  * `we_them_ratio` (FLOAT) : Ratio de repli identitaire ($R_{we\_them}$).
+  * `negativity_score` (FLOAT) : Niveau de toxicité probabiliste déterminé contextuellement.
+
+* **Table des Network Features (Caractéristiques Réseau)** :
+  * `node_id` (VARCHAR) : Identifiant du nœud correspondant à l'utilisateur ou à la publication.
+  * `node_type` (VARCHAR) : Rôle dans le réseau (utilisateur, publication).
+  * `edge_source` (VARCHAR) / `edge_target` (VARCHAR) : Paires d'interactions relationnelles.
+  * `interaction_type` (VARCHAR) : Nature de la liaison (réponse, mention, partage).
+  * `degree` (INTEGER) : Nombre global de connexions du nœud.
+  * `community` (INTEGER) : Identifiant du groupe issu de la détection Louvain.
+
+### 4.1.3. Pipeline de Nettoyage et de Standardisation des Données
+
+Afin de garantir la qualité des traitements sémantiques ultérieurs, les données brutes sont passées par un pipeline de prétraitement séquentiel écrit en Python :
+1. **Suppression des lignes corrompues** : Élimination des publications dont les champs textuels ou les identifiants requis sont vides ou ont une longueur insignifiante (inférieure à 3 caractères).
+2. **Déduplication sémantique** : Retrait des doublons stricts provoqués par les retweets/reposts automatiques pour éviter de fausser les graphes et les analyses de fréquences.
+3. **Filtrage linguistique dynamique** : Utilisation de la bibliothèque `langdetect` pour conserver exclusivement les publications rédigées en langue anglaise (`'en'`), assurant la compatibilité avec le classificateur de toxicité et le modèle CLIP.
+
+## 4.2. Analyse Baseline de l'Engagement et de la Négativité
+
+Avant d'introduire des architectures complexes de Deep Learning, une analyse statistique baseline a été menée pour étudier la relation entre l'engagement utilisateur et la négativité lexicale brute au sein des données textuelles.
+
+### 4.2.1. Calcul de la Négativité Lexicale Heuristique
+
+Pour cette évaluation baseline, un score de négativité simple a été calculé en dénombrant la fréquence relative de mots-clés hostiles prédéfinis au sein de chaque commentaire (tels que *bad, hate, stupid, idiot, fake*).
+L'engagement a été quantifié par le score cumulé de votes (pour Reddit) et le nombre de mentions "J'aime" (pour YouTube).
+
+### 4.2.2. Analyse de Corrélation de Spearman
+
+Afin de déterminer s'il existe une relation monotone entre la négativité brute d'un message et son niveau d'engagement (likes/votes), le coefficient de corrélation de rang de Spearman ($\rho$) a été calculé. Ce coefficient non paramétrique est défini par :
+
+$$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
+
+Où $d_i$ représente la différence entre les rangs de négativité et d'engagement pour chaque observation, et $n$ désigne le nombre total de messages. Les résultats empiriques obtenus sont les suivants :
+* **Sur le corpus de publications politiques de Reddit** : $\rho = 0,0148$ ($p = 0,2246$).
+* **Sur le corpus de commentaires YouTube** : $\rho = 0,0050$ ($p = 0,6326$).
+
+### 4.2.3. Interprétation Académique et Limites des Approches Lexicales
+
+Ces coefficients de corrélation, extrêmement proches de zéro et associés à des p-values largement supérieures au seuil de signification habituel de $\alpha = 0,05$ ($p > 0,05$), démontrent de manière rigoureuse qu'**il n'existe aucune corrélation monotone statistiquement significative** entre la négativité textuelle brute (comptage lexical simple) et l'engagement des utilisateurs.
+
+Ce résultat met en évidence les limites fondamentales des approches lexicales classiques (recherche par mots-clés) pour l'analyse discursive sur le web social :
+1. **Insensibilité au contexte** : Les lexiques figés ignorent les structures grammaticales, les double-sens et les formulations subtiles.
+2. **Cécité face au sarcasme et à l'ironie** : Un message ironique peut utiliser des termes positifs pour exprimer une hostilité acerbe, échappant ainsi aux compteurs naïfs.
+3. **Absence de dimension multimodale** : Les mèmes associent souvent des visuels anodins à des textes critiques, créant une dissonance sémantique invisible par simple analyse de chaînes de caractères.
+
+Ces limites scientifiques justifient pleinement notre choix de transition vers des modèles de représentation profonds et contextuels, notamment les transformeurs linguistiques (**Google Perspective API** et **DistilBERT**) ainsi que le modèle de vision-langage **OpenAI CLIP**.
+
+## 4.3. Analyse Multimodale des Mèmes Politiques via CLIP
 
 Pour étudier les mèmes politiques combinant texte satirique et imagerie symbolique, nous avons mis en œuvre un script d'extraction d'embeddings unifiés à l'aide du modèle **CLIP** d'OpenAI (`clip-vit-base-patch32`). L'objectif était d'évaluer le niveau d'alignement sémantique entre le texte d'un mème et son image associée, ainsi que de classifier l'image seule dans un espace de concepts.
 
@@ -249,7 +342,66 @@ def process_meme(image_path, text):
 
 Ce module permet de détecter les mèmes qui utilisent des images apparemment anodines pour propager des messages hostiles en identifiant un faible alignement sémantique direct mais une forte classification d'opposition rhétorique (Out-group).
 
-## 4.3. Modélisation de Réseau Cross-Platform et Détection de Chambres d'Écho
+## 4.4. Analyse de Réseau de Co-occurrence de Hashtags
+
+Pour modéliser la structure thématique et les associations conceptuelles au sein des débats en ligne, nous avons conçu un module d'analyse de réseaux complexes basé sur la co-occurrence de hashtags (Semaine 4).
+
+### 4.4.1. Filtrage et Extraction Sémantique Spécifique
+
+Afin d'éviter le bruit lié aux publications non pertinentes, le script implémente une étape de tokenisation et de filtrage sémantique rigoureuse. Les hashtags extraits par expression régulière (`#\w+`) sont comparés à une liste blanche thématique contenant des mots-clés d'actualité politique et géopolitique (*trump, biden, gaza, israel, climate, brexit*, etc.). Les hashtags non validés ou associés à du bruit de fond sont ignorés.
+
+### 4.4.2. Construction du Graphe de Co-occurrence
+
+Deux hashtags sont reliés par une arête non orientée si et seulement s'ils co-apparaissent au sein d'un même document (publication ou commentaire). Le poids de l'arête correspond au nombre total de co-occurrences observées sur l'ensemble du corpus.
+
+Le graphe est construit sous la forme d'un objet `nx.Graph` via NetworkX, puis filtré pour conserver uniquement les nœuds de fréquence significative et les arêtes de poids supérieur ou égal à 1.
+
+### 4.4.3. Calcul des Centralités et Détection de Communautés
+
+Afin de caractériser l'importance relative de chaque concept, le module calcule trois métriques de centralité :
+1. **Centralité de Degré** : Mesure l'activité locale immédiate d'un hashtag par son nombre d'arêtes incidentes.
+2. **Centralité d'Intermédiarité (Betweenness)** : Identifie les hashtags qui agissent comme des ponts informationnels entre des thématiques distinctes.
+3. **PageRank** : Évalue l'influence globale et récursive d'un nœud en fonction de la structure globale du réseau.
+
+De plus, l'algorithme de partitionnement de Louvain (`community_louvain.best_partition`) est appliqué pour isoler des clusters thématiques. Les données résultantes sont exportées dans le fichier de synthèse `deliverables/hashtag_centrality_stats.csv`.
+
+Voici l'implémentation algorithmique de la construction et de l'analyse du graphe :
+
+```python
+# Extrait du module hashtag_network_analysis.py
+import networkx as nx
+import community.community_louvain as louvain
+
+def analyze_hashtag_network(co_occurrence, hashtag_counts):
+    G = nx.Graph()
+    
+    # Construction du graphe pondéré
+    for (h1, h2), weight in co_occurrence.items():
+        if weight >= 1:
+            G.add_edge(h1, h2, weight=weight)
+            
+    # Ajout des métadonnées de taille
+    for h, count in hashtag_counts.items():
+        if h in G:
+            G.nodes[h]['size'] = count
+            
+    # Calcul des centralités
+    degree_cent = nx.degree_centrality(G)
+    betweenness_cent = nx.betweenness_centrality(G, weight='weight')
+    pagerank_cent = nx.pagerank(G, weight='weight')
+    
+    # Détection de communautés Louvain
+    partition = louvain.best_partition(G, weight='weight')
+    nx.set_node_attributes(G, partition, 'group')
+    
+    return G, degree_cent, betweenness_cent, pagerank_cent, partition
+```
+
+### 4.4.4. Visualisation Interactive
+
+Pour rendre ce réseau de hashtags explorable par des analystes, nous générons une interface interactive HTML (`deliverables/hashtag_network.html`) à l'aide de la bibliothèque Pyvis. La physique du réseau est configurée sous un modèle ForceAtlas2 pour étirer les communautés et mettre en évidence les nœuds centraux, dont la taille est proportionnelle à leur fréquence d'apparition.
+
+## 4.5. Modélisation de Réseau Cross-Platform et Détection de Chambres d'Écho
 
 Pour capturer et analyser l'architecture relationnelle des échanges en ligne, nous avons conçu un graphe fusionné de grande envergure. Le graphe rassemble les utilisateurs et les messages sous forme de nœuds et définit des arêtes dirigées basées sur les interactions réelles de réponses (replies) et de citations (mentions).
 
@@ -259,15 +411,17 @@ $$Q = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(
 
 Où $A_{ij}$ est l'élément de la matrice d'adjacence entre les nœuds $i$ et $j$, $k_i$ et $k_j$ sont leurs degrés respectifs, $m$ représente le nombre total d'arêtes du graphe, $c_i$ et $c_j$ indiquent les communautés d'appartenance, et $\delta$ est le symbole de Kronecker (vaut 1 si $c_i = c_j$, et 0 sinon).
 
-L'analyse de notre graphe fusionné en Semaine 5 a révélé des métriques structurelles exceptionnelles :
-*   **Nombre total de nœuds** : 20 641 (utilisateurs uniques et publications interconnectés).
-*   **Nombre total d'arêtes** : 18 087 (liaisons d'interactions physiques).
-*   **Nombre de communautés identifiées** : 3 484.
-*   **Modularity Score ($Q$)** : **0,9539**.
+L'analyse de notre graphe fusionné en Semaine 5 a révélé des métriques structurelles claires :
+*   **Nombre total de nœuds (réseau brut)** : 20 537 (utilisateurs uniques et publications interconnectés).
+*   **Nombre total d'arêtes (réseau brut)** : 21 240 (liaisons d'interactions physiques).
+*   **Nombre total de nœuds du cœur (degré $\ge$ 2)** : 697.
+*   **Nombre total d'arêtes du cœur (degré $\ge$ 2)** : 1 400.
+*   **Nombre de communautés identifiées** : 5 principales.
+*   **Modularity Score ($Q$) sur le cœur** : **0,6183**.
 
-Une modularité supérieure à 0,3 indique une structure de communauté forte. Notre score extrême de 0,9539 prouve de manière mathématique et indiscutable la présence de **chambres d'écho hermétiques** au sein des réseaux étudiés, caractérisées par d'intenses échanges internes mais une absence quasi totale de communication transverse avec le reste du réseau.
+Une modularité supérieure à 0,3 indique une structure de communauté forte. Notre score de 0,6183 prouve de manière mathématique et indiscutable la présence de **chambres d'écho hermétiques** au sein des réseaux étudiés, caractérisées par d'intenses échanges internes mais une communication transverse restreinte avec le reste du réseau.
 
-## 4.4. Formulation de l'Indice de Polarisation Discursive
+## 4.6. Formulation de l'Indice de Polarisation Discursive
 
 Pour chaque communauté détectée par l'algorithme de Louvain, nous calculons un indicateur composite exclusif appelé **Indice de Polarisation Discursive** ($PI_c$). Cet indice croise un facteur linguistique mesurant le repli identitaire (le tribalisme rhétorique) avec la probabilité de toxicité des contenus évaluée par la Google Perspective API.
 
@@ -292,10 +446,10 @@ Les résultats d'évaluation obtenus en Semaine 6 sur les principaux clusters il
 
 Ces calculs démontrent la forte corrélation entre l'utilisation massive d'un pronom tribalisant ("Nous" majoritaire ou égal à "Eux") et le développement de structures verbales hostiles. À l'inverse, les médias d'information généraux (Cluster 2) conservent un ratio extrêmement faible (0,18) en raison de leur devoir de neutralité éditoriale, ce qui donne un Indice de Polarisation très faible (0,088) malgré une toxicité de zone de commentaires standard.
 
-## 4.5. Architecture de l'Application Streamlit et Code de Personnalisation
+## 4.7. Architecture de l'Application Streamlit et Code de Personnalisation
 
 Afin de rendre ces résultats accessibles, j'ai développé l'interface web sous **Streamlit** en intégrant des scripts d'optimisation CSS et sémantiques très stricts répondant aux contraintes méthodologiques de l'IUT et de la Dr. Shahana Bano (GEMINI.md) :
-1.  **Esthétique sobre et documentaire (Flat Design)** : Hachage complet des éléments Streamlit superflus (logos, menus Streamlit par défaut).
+1.  **Esthétique sobre et documentaire (Flat Design)** : Masquage complet des éléments Streamlit superflus (logos, menus Streamlit par défaut).
 2.  **Système de navigation personnalisé pour la barre latérale** : Les liens radio par défaut de Streamlit ont été masqués et entièrement restylisés via CSS. L'option sélectionnée apparaît en gras, colorée en bleu saphir (`#3B82F6`) et précédée d'une flèche textuelle classique `> ` sans aucun effet de relief, de décalage ou de fond coloré.
 3.  **Normalisation relative des heatmaps** : Afin d'éviter l'aplatissement visuel des variations de toxicité (puisque les moyennes de toxicité réelles se concentrent entre 0,38 et 0,52, rendant une échelle absolue [0, 1] inutilement verte), nous appliquons une min-max normalisation par colonne pour forcer le contraste de vert à rouge tout en annotant la valeur absolue réelle à l'intérieur des cellules de la grille Plotly.
 
@@ -358,6 +512,15 @@ div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checke
 
 Grâce à cette structure CSS injectée de manière isolée, le tableau de bord Streamlit ressemble à une application scientifique sur mesure et s'éloigne totalement du design générique de type conteneur.
 
+### 4.7.1. Module de Comparaison Inter-Plateformes et Évolution Temporelle
+
+Le tableau de bord intègre un onglet de comparaison inter-plateformes destiné à contraster les comportements des utilisateurs et la structure discursive de chaque média :
+
+1. **Empreinte des Pronoms (Platform Fingerprints)** : Comparaison globale du volume des pronoms d'in-group et d'out-group. Une prévalence du ratio au-dessus de 1,0 met en évidence les plateformes qui hébergent les discours les plus autoréférencés.
+2. **Indicateurs Comparatifs Macro** : Un tableau croisé synthétise pour chaque plateforme la négativité moyenne (toxicité contextuelle) et la densité thématique (nombre moyen de mots par message). Cet indicateur montre par exemple que Reddit favorise les argumentations longues et denses, tandis que YouTube et Twitter se caractérisent par des réactions courtes et polarisées.
+3. **Analyse Temporelle et Événementielle** : Un graphique d'évolution par trimestre permet de suivre la fluctuation du ratio "Nous/Eux" sur plusieurs années (2018-2026). Pour garantir la robustesse statistique, le système filtre les trimestres ayant un échantillon inférieur à 50 messages ($N \ge 50$) et applique un lissage de Laplace ($\alpha = 10$).
+4. **Corrélation Événementielle** : Des repères visuels sont ajoutés sur la frise chronologique pour corréler les pics de polarisation discursive avec des jalons historiques majeurs (Midterms américaines de 2018 et 2022, élection présidentielle américaine de 2020 et 2024, assaut du Capitole en 2021, début du conflit à Gaza en 2023). Cela démontre de manière empirique comment les tensions politiques externes résonnent instantanément sur les différents canaux sociaux.
+
 ---
 
 # 5. CONCLUSION ET BILAN PROFESSIONNEL
@@ -402,7 +565,7 @@ Pour valider mon stage de deuxième année de BUT Informatique, j'ai confronté 
 *   *Après l'expérience* : 4,5 / 5
 
 **Justification technique des acquis** :
-Au cours de ce stage, j'ai structuré le code du projet sous forme de modules Python hautement réutilisables, séparant l'acquisition des données (`youtube_dataset_fetcher.py`), l'analyse multimodale (`clip_feature_extractor.py`), l'analyse de réseaux (`hashtag_network_analysis.py`, `cross_platform_network.py`) et la visualisation (`app.py`). J'ai respecté des règles de développement professionnelles (gestion des environnements virtuels `.venv`, isolation des clés de configuration privées via des variables d'environnement dans un fichier `.env`, documentation des fonctions par docstrings, versioning propre sous Git). Le développement de l'interface réactive sous Streamlit a également requis la mise en place de structures logicielles dynamiques pour l'import de jeux de données par l'utilisateur final en gérant le typage dynamique des colonnes CSV.
+Au cours de ce stage, j'ai structuré le code du projet sous forme de modules Python hautement réutilisables, séparant l'acquisition des données (`youtube_dataset_fetcher.py`), l'analyse multimodale (`clip_feature_extractor.py`), l'analyse de réseaux (`hashtag_network_analysis.py`, `cross_platform_network.py`) et la visualisation (`app.py`). Cette réalisation a permis de consolider des compétences d'acquisition sécurisée de données (YouTube/Reddit, **Compétence-clé 1**) sous le respect des API et des quotas, de traitement automatique et d'évaluation sémantique multimodale via l'implémentation locale de **CLIP** (**Compétence-clé 3**), ainsi que de conception d'interfaces dynamiques sous **Streamlit** (**Compétence-clé 6**). J'ai respecté des règles de développement professionnelles (gestion des environnements virtuels `.venv`, isolation des clés de configuration privées via des variables d'environnement dans un fichier `.env`, documentation des fonctions par docstrings, versioning propre sous Git). Le développement de l'interface réactive a également requis la mise en place de structures logicielles dynamiques pour l'import de jeux de données par l'utilisateur final en gérant le typage dynamique des colonnes CSV.
 
 ## 6.2. Compétence 2 : Optimiser des Applications
 
@@ -411,7 +574,7 @@ Au cours de ce stage, j'ai structuré le code du projet sous forme de modules Py
 *   *Après l'expérience* : 4,0 / 5
 
 **Justification technique des acquis** :
-L'un des défis majeurs a été l'optimisation des performances de rendu graphique et du temps d'exécution des modèles NLP. Pour le traitement multimodal, j'ai configuré le script pour détecter automatiquement et tirer parti des architectures matérielles matérielles disponibles (MPS pour Apple Silicon M1/M2, CUDA pour GPUs NVIDIA), permettant d'accélérer par un facteur 15 l'extraction de similarités CLIP par rapport à un processeur CPU classique. Côté visualisation, afficher un graphe fusionné de 20 641 nœuds et 18 087 arêtes sous forme d'arbre DOM standard provoquait un blocage total du navigateur. J'ai résolu ce problème en intégrant le module Plotly WebGL (`go.Scattergl`), qui déporte le calcul de rendu matriciel directement sur la carte graphique de l'ordinateur client. De plus, j'ai optimisé les temps de chargement de l'application Streamlit en utilisant les décorateurs de cache mémoire (`st.cache_data`) afin d'éviter le re-calcul des algorithmes de centralité ou le re-chargement répété des bases de données CSV lors de chaque interaction sur l'interface.
+L'un des défis majeurs a été l'optimisation des performances de rendu graphique et du temps d'exécution des modèles NLP. Pour le traitement multimodal, j'ai configuré le script pour détecter automatiquement et tirer parti des architectures matérielles disponibles (accélération **MPS** pour Apple Silicon, ou **CUDA** pour GPUs NVIDIA), permettant d'accélérer par un facteur 15 l'extraction d'embeddings et de similarités **CLIP** (**Compétence-clé 3**). J'ai également optimisé le calcul de la modularité Louvain en adaptant l'algorithme de partitionnement au réseau de discussion centralisé (pruning des nœuds isolés de degré < 2, **Compétence-clé 5**). Côté visualisation, afficher un graphe fusionné massif sous forme d'arbre DOM standard provoquait un blocage du navigateur. J'ai résolu ce problème en intégrant le module Plotly WebGL (`go.Scattergl`), déportant le calcul matriciel sur le GPU client (**Compétence-clé 6**). De plus, j'ai optimisé les temps de chargement de l'application Streamlit en utilisant les décorateurs de cache mémoire (`st.cache_data`) afin d'éviter le re-calcul des algorithmes de centralité lors de chaque interaction utilisateur.
 
 ## 6.3. Compétence 3 : Gérer des Données
 
@@ -420,7 +583,7 @@ L'un des défis majeurs a été l'optimisation des performances de rendu graphiq
 *   *Après l'expérience* : 4,5 / 5
 
 **Justification technique des acquis** :
-Ce projet reposait entièrement sur la manipulation de bases de données volumineuses et hétérogènes. J'ai conçu un schéma de données robuste découpé en trois couches structurelles : posts bruts, caractéristiques sémantiques NLP, et caractéristiques structurelles réseau. J'ai mis au point un pipeline complet d'ingénierie des données via la bibliothèque Pandas, incluant la gestion des valeurs manquantes, la déduplication et le filtrage sémantique. J'ai modélisé des graphes complexes sous NetworkX en appliquant des algorithmes de filtrage de degré (retrait des nœuds parasites de degré inférieur à 3) pour éliminer le bruit structurel et isoler le noyau dur des chambres d'écho. L'export des graphes cross-platform a été standardisé sous forme de fichiers GML et de coordonnées JSON précalculées pour assurer la portabilité et la pérennité des données d'affichage.
+Ce projet reposait entièrement sur la manipulation de bases de données volumineuses et hétérogènes. J'ai conçu un schéma de données robuste découpé en trois couches structurelles : posts bruts, caractéristiques sémantiques NLP, et caractéristiques structurelles réseau. J'ai mis au point un pipeline complet d'ingénierie des données via la bibliothèque Pandas, incluant la gestion des valeurs manquantes, la déduplication et le filtrage linguistique. J'ai développé des compétences avancées d'analyse de métadonnées sociales (évaluation d'engagement, lissage de Laplace pour ratios linguistiques, **Compétence-clé 2**). De plus, j'ai modélisé et structuré des graphes de co-occurrence de hashtags et d'interactions d'utilisateurs sous **NetworkX** (**Compétence-clé 4**), et exécuté des algorithmes de partitionnement Louvain pour isoler les chambres d'écho (**Compétence-clé 5**). L'export des graphes cross-platform a été standardisé sous forme de fichiers GML et de coordonnées JSON précalculées pour assurer la portabilité et la pérennité des données d'affichage.
 
 ## 6.4. Compétence 5 : Conduire un Projet
 
@@ -429,7 +592,7 @@ Ce projet reposait entièrement sur la manipulation de bases de données volumin
 *   *Après l'expérience* : 4,0 / 5
 
 **Justification technique des acquis** :
-En travaillant de manière autonome au sein d'une équipe de recherche internationale, j'ai dû piloter l'avancement de mes livrables de manière extrêmement rigoureuse. Je me suis appuyé sur un plan de développement structuré en 10 semaines, consigné dans un fichier de suivi de projet (`docs/internship_roadmap_wethem.xlsx`), et j'ai documenté mes progrès hebdomadaires dans le fichier d'accompagnement de l'IUT. J'ai su faire preuve d'autonomie et d'adaptation lorsque les contraintes techniques l'imposaient : par exemple, lors du blocage d'accès à l'API Reddit PRAW, j'ai immédiatement pivoté vers une intégration de datasets sémantiques équivalents pré-compilés sur Hugging Face pour ne pas retarder le calendrier du projet. Les revues de sprints hebdomadaires avec la Dr. Shahana Bano m'ont permis d'ajuster continuellement la portée de mes livrables pour répondre parfaitement aux attentes de recherche de l'organisme d'accueil.
+En travaillant de manière autonome au sein d'une équipe de recherche internationale, j'ai dû piloter l'avancement de mes livrables de manière extrêmement rigoureuse. Je me suis appuyé sur un plan de développement structuré en 10 semaines, consigné dans un fichier de suivi de projet (`docs/internship_roadmap_wethem.xlsx`), et j'ai documenté mes progrès hebdomadaires dans le fichier d'accompagnement de l'IUT. J'ai su faire preuve d'autonomie et d'adaptation lorsque les contraintes techniques l'imposaient : par exemple, lors du blocage d'accès à l'API Reddit PRAW, j'ai immédiatement pivoté vers une intégration de datasets sémantiques équivalents pré-compilés sur Hugging Face pour ne pas retarder le calendrier. Les revues de sprints hebdomadaires avec la Dr. Shahana Bano m'ont permis d'ajuster continuellement la portée de mes livrables. Enfin, ce stage a développé ma compétence de rédaction et valorisation académique (**Compétence-clé 7**), matérialisée par la rédaction de ce rapport de stage, la préparation d'un diaporama de soutenance synthétique et la co-rédaction d'un article de recherche scientifique formel en anglais structuré selon le format standard de la recherche (Méthodes, Résultats, Discussion, Limitations).
 
 ---
 

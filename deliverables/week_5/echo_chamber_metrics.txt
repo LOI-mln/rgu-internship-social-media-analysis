@@ -1,9 +1,9 @@
 Week 5 - Echo Chamber & Graph Merge Metrics (Reddit & YouTube)
 =======================================================
-Total Core Nodes: 574
-Total Core Edges: 1188
-Number of detected communities: 5
-Modularity Score (Q): 0.6039
+Total Core Nodes: 697
+Total Core Edges: 1400
+Number of detected communities: 11
+Modularity Score (Q): 0.6183
 
 Interpretation:
 - Modularity > 0.3 indicates strong community structure.
