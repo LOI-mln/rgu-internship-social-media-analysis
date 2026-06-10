@@ -4,20 +4,20 @@ from datasets import load_dataset
 
 print("🔴 Loading Hateful Memes metadata from HuggingFace...")
 
-# Charger les métadonnées (texte + étiquette) à partir de la version publique de neuralcatcher
-# Note : Cette version ne contient que les chemins des images, pas les images elles-mêmes !
+# Load metadata (text + label) from the public neuralcatcher version
+# Note: this version only contains image paths, not the images themselves.
 dataset = load_dataset('neuralcatcher/hateful_memes', split='train')
 
 print(f"✅ {len(dataset)} metadata entries successfully loaded!")
 
-# Sauvegarder les textes et les étiquettes
+# Save texts and labels
 metadata = []
 for example in dataset:
     metadata.append({
         "id": example['id'],
         "text": example['text'],
-        "label": example['label'], # 1 = Haineux, 0 = Non haineux
-        "image_path": example['img'] # Juste le nom de fichier (ex., 'img/12345.png')
+        "label": example['label'], # 1 = Hateful, 0 = Non-hateful
+        "image_path": example['img'] # Only the filename (for example, 'img/12345.png')
     })
 
 df = pd.DataFrame(metadata)

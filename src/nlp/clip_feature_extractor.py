@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 print("🔴 Task 2: Loading CLIP model (openai/clip-vit-base-patch32)...")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-# Pour Mac M1/M2 (Apple Silicon), 'mps' est disponible pour l'accélération matérielle
+# On Mac M1/M2 (Apple Silicon), 'mps' is available for hardware acceleration
 if torch.backends.mps.is_available():
     device = "mps"
 
@@ -17,11 +17,11 @@ model = CLIPModel.from_pretrained(model_id).to(device)
 processor = CLIPProcessor.from_pretrained(model_id)
 print(f"✅ CLIP model loaded on device: {device}")
 
-# Charger le jeu de données
+# Load the dataset
 print("🔴 Loading Hateful Memes metadata...")
 df = pd.read_csv("data/raw/hateful_memes.csv")
 
-# Tâche 5 : Définitions d'étiquettes Zero-Shot pour la classification de mèmes
+# Task 5: zero-shot label definitions for meme classification
 zero_shot_labels = ["a meme about us (in-group)", "a meme about them (out-group)", "a neutral image"]
 
 similarities = []
@@ -40,28 +40,28 @@ for index, row in tqdm(df.iterrows(), total=len(df)):
     try:
         image = Image.open(image_path).convert("RGB")
         
-        # 1. Traitement croisé (Image du mème + Texte) pour la similarité cosinus
+        # 1. Cross-modal processing (meme image + text) for cosine similarity
         inputs = processor(text=[text], images=image, return_tensors="pt", padding=True).to(device)
         with torch.no_grad():
             outputs = model(**inputs)
             
-            # Embeddings normalisés
+            # Normalized embeddings
             image_embeds = outputs.image_embeds
             text_embeds = outputs.text_embeds
             
-            # Tâche 4 : Similarité cosinus entre le texte encodé et l'image elle-même
+            # Task 4: cosine similarity between the encoded text and the image itself
             cos_sim = F.cosine_similarity(image_embeds, text_embeds).item()
             similarities.append(cos_sim)
             
-            # 2. Tâche 5 : Classification Zero-Shot de l'image seule
+            # 2. Task 5: zero-shot classification of the image alone
             zero_shot_inputs = processor(text=zero_shot_labels, images=image, return_tensors="pt", padding=True).to(device)
             zs_outputs = model(**zero_shot_inputs)
             
-            # Probabilités sur les 3 étiquettes (softmax)
+            # Probabilities across the 3 labels (softmax)
             logits_per_image = zs_outputs.logits_per_image
             probs = logits_per_image.softmax(dim=1).cpu().numpy()[0]
             
-            # Obtenir l'étiquette gagnante
+            # Get the winning label
             best_label_idx = probs.argmax()
             visual_predictions.append(zero_shot_labels[best_label_idx])
             
@@ -70,11 +70,11 @@ for index, row in tqdm(df.iterrows(), total=len(df)):
         similarities.append(None)
         visual_predictions.append(None)
 
-# Mettre à jour le DataFrame
+# Update the DataFrame
 df['clip_similarity'] = similarities
 df['visual_label'] = visual_predictions
 
-# Exporter le résultat
+# Export the result
 output_path = "data/cleaned/hateful_memes_clip_scored.csv"
 os.makedirs("data/cleaned", exist_ok=True)
 df.to_csv(output_path, index=False)

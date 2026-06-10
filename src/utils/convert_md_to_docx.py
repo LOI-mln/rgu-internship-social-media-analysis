@@ -254,7 +254,7 @@ def parse_markdown_to_docx(md_path, docx_path):
                 # Heading 1 starts on a new page/section (except main title on the cover page)
                 if level == 1 and not cover_page:
                     # Specific requirement: pagination stops at the conclusion.
-                    # Section 6 (Auto-évaluation) and subsequent chapters are in a new section without page numbers.
+                    # Section 6 (self-assessment) and subsequent chapters are in a new section without page numbers.
                     if title.startswith("6. AUTO-ÉVALUATION"):
                         new_section = doc.add_section()
                         new_section.footer.is_linked_to_previous = False
@@ -323,7 +323,7 @@ def parse_markdown_to_docx(md_path, docx_path):
         is_list = stripped.startswith("* ") or stripped.startswith("- ") or (stripped.startswith("1. ") or stripped.startswith("2. ") or stripped.startswith("3. ") or stripped.startswith("4. ") or stripped.startswith("5. "))
         
         p = doc.add_paragraph()
-        p.paragraph_format.line_spacing = 1.0 # Interligne simple
+        p.paragraph_format.line_spacing = 1.0 # Single line spacing
         p.paragraph_format.space_after = Pt(6)
         
         if is_list:

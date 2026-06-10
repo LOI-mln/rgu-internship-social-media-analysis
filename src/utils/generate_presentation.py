@@ -268,7 +268,7 @@ def create_presentation():
         run.font.bold = False
         run.font.color.rgb = COLOR_CHARCOAL
 
-    # Right panel - Problématique
+    # Right panel - research question
     panel_prob = slide_3.shapes.add_shape(1, Inches(6.7), Inches(1.5), Inches(6.133), Inches(5.0))
     panel_prob.fill.solid()
     panel_prob.fill.fore_color.rgb = COLOR_LIGHT_BG
@@ -553,7 +553,7 @@ def create_presentation():
         "    # Remove nulls & short texts\n"
         "    df = df.dropna(subset=['text'])\n"
         "    df = df[df['text'].str.len() > 3]\n\n"
-        "    # Deduplicate sémantiquement\n"
+        "    # Deduplicate semantically\n"
         "    df = df.drop_duplicates(subset=['text'])\n\n"
         "    # Filter language\n"
         "    df['lang'] = df['text'].apply(safe_detect_lang)\n"

@@ -18,12 +18,12 @@ except FileNotFoundError:
     print(f"❌ Erreur: Fichier {STATS_CSV} introuvable. Exécutez l'analyse de réseau en premier.")
     exit(1)
 
-# 1. Bar Chart : Top 15 Hashtags les plus influents (PageRank)
+# 1. Bar chart: top 15 most influential hashtags (PageRank)
 print("📈 Génération du graphique d'influence (PageRank)...")
 plt.figure(figsize=(10, 8))
 top_pagerank = df.sort_values(by="pagerank", ascending=False).head(15)
 
-# Style seaborn
+# Seaborn style
 sns.set_theme(style="whitegrid")
 ax = sns.barplot(data=top_pagerank, x="pagerank", y="hashtag", palette="viridis")
 
@@ -31,7 +31,7 @@ plt.title("Top 15 Most Influential Hashtags (PageRank)", fontsize=16, fontweight
 plt.xlabel("Influence Score (PageRank)", fontsize=12)
 plt.ylabel("Hashtags", fontsize=12)
 
-# Ajouter les valeurs sur les barres
+# Add values on the bars
 for i, v in enumerate(top_pagerank["pagerank"]):
     ax.text(v + 0.001, i + 0.1, f"{v:.3f}", color='black', fontsize=10)
 
@@ -39,7 +39,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "plot_top_influence.png"), dpi=300)
 plt.close()
 
-# 2. Bar Chart : Top 15 par Fréquence (pour comparer)
+# 2. Bar chart: top 15 by frequency (for comparison)
 print("📈 Génération du graphique de fréquence...")
 plt.figure(figsize=(10, 8))
 top_freq = df.sort_values(by="frequency", ascending=False).head(15)
@@ -56,9 +56,9 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "plot_top_frequency.png"), dpi=300)
 plt.close()
 
-# 3. Tableau des Communautés (Top 3 hashtags par communauté principale)
+# 3. Community table (top 3 hashtags per main community)
 print("🏘️ Génération du résumé des communautés narratives...")
-# Garder les communautés avec le plus de hashtags
+# Keep the communities with the most hashtags
 top_communities = df['community'].value_counts().head(5).index
 
 community_summary = []

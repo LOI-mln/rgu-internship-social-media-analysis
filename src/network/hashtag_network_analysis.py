@@ -22,7 +22,7 @@ OUTPUT_HTML = os.path.join(OUTPUT_DIR, "hashtag_network.html")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Liste blanche de domaines Politique / Actualité / Social (correspondances exactes ou sous-chaînes)
+# Domain whitelist for politics, news, and social topics (exact matches or substrings)
 DOMAIN_KEYWORDS = [
     "politi", "bernie", "trump", "biden", "elect", "vote", "democrat", "republic", 
     "gaza", "israel", "palest", "war", "peace", "bbc", "news", "parliament", "congress",
@@ -35,7 +35,7 @@ DOMAIN_KEYWORDS = [
 ]
 
 def text_to_tokens(text):
-    """Tokeniser le texte tout en préservant les hashtags, en gardant UNIQUEMENT les hashtags liés au domaine."""
+    """Tokenize text while preserving hashtags and keeping only domain-related hashtags."""
     if not isinstance(text, str):
         return []
     
@@ -45,9 +45,9 @@ def text_to_tokens(text):
     for t in tokens:
         if t.startswith("#") and len(t) > 1:
             hashtag = t[1:]
-            # Vérifier si le hashtag appartient au domaine politique
+            # Check whether the hashtag belongs to the political domain
             if any(keyword in hashtag for keyword in DOMAIN_KEYWORDS):
-                # Filtre extra strict pour éviter les fausses correspondances et le bruit reddit
+                # Extra strict filter to avoid false matches and Reddit noise
                 if hashtag in ["makeup", "awkward", "cutebeuty", "prankwars", "ukcomedy", "uktalent", "timewarpscan", "sucuk", "suçuk", "motherinlaw", "teamusatryout", "x200b", "submissions", "echobox", "selection", "this", "all", "we", "no", "click"]:
                     continue
                 valid_tokens.append(t)
@@ -57,7 +57,7 @@ def text_to_tokens(text):
     return valid_tokens
 
 def build_cooccurrence_matrix(data_files, window_size):
-    """Construire une matrice de co-occurrence de hashtags au niveau du document."""
+    """Build a document-level hashtag co-occurrence matrix."""
     print(f"🔍 Building co-occurrence matrix (Document level)...")
     co_occurrence = Counter()
     hashtag_counts = Counter()
@@ -83,14 +83,14 @@ def build_cooccurrence_matrix(data_files, window_size):
             for doc in df[text_col].dropna():
                 tokens = text_to_tokens(doc)
                 
-                # Obtenir les hashtags valides uniques dans ce document
+                # Get the unique valid hashtags in this document
                 doc_hashtags = list(set([t[1:] for t in tokens if t.startswith("#") and len(t) > 1]))
                 
                 for h in doc_hashtags:
                     hashtag_counts[h] += 1
                     hashtags_in_col += 1
                     
-                # Co-occurrence de toutes les paires dans ce document
+                # Co-occurrence of all pairs in this document
                 for i in range(len(doc_hashtags)):
                     for j in range(i + 1, len(doc_hashtags)):
                         h1, h2 = sorted([doc_hashtags[i], doc_hashtags[j]])
@@ -101,16 +101,16 @@ def build_cooccurrence_matrix(data_files, window_size):
     return co_occurrence, hashtag_counts
 
 def main():
-    # 2. Construire les données de co-occurrence
+    # 2. Build co-occurrence data
     co_occurrence, hashtag_counts = build_cooccurrence_matrix(DATA_FILES, WINDOW_SIZE)
     
     if not co_occurrence:
         print("❌ No hashtag co-occurrences found. Check your data or window size.")
-        # Nous pouvons toujours créer un graphe avec seulement des nœuds si nécessaire, mais l'utilisateur veut des connexions.
+        # We can still create a graph with nodes only if needed, but the user wants connections.
         if not hashtag_counts:
             return
 
-    # 3. Creation du graphe (NetworkX)
+    # 3. Graph creation (NetworkX)
     print(f"🕸️ Creating graph with {len(co_occurrence)} unique co-occurrences...")
     G = nx.Graph()
     
@@ -119,13 +119,13 @@ def main():
     print(f"🧹 Filtering for hashtags with frequency >= {MIN_FREQUENCY} and edge weight >= {MIN_EDGE_WEIGHT}...")
     
     for (h1, h2), weight in co_occurrence.items():
-        # N'ajouter une arête que si les DEUX hashtags atteignent le seuil de fréquence minimum ET que l'arête est forte
+        # Add an edge only if BOTH hashtags meet the minimum frequency threshold and the edge is strong
         if weight >= MIN_EDGE_WEIGHT and hashtag_counts.get(h1, 0) >= MIN_FREQUENCY and hashtag_counts.get(h2, 0) >= MIN_FREQUENCY:
             G.add_edge(h1, h2, weight=weight)
     
     print(f"✅ Graph created: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges.")
     
-    # Ajouter les nœuds qui pourraient avoir des hashtags mais pas de co-occurrences
+    # Add nodes that may have hashtags but no co-occurrences
     for h, count in hashtag_counts.items():
         if count >= MIN_FREQUENCY:
             if h not in G:
@@ -137,11 +137,11 @@ def main():
         print("❌ Graph is empty. No hashtags found.")
         return
 
-    # 4. Calcul des métriques de centralité
+    # 4. Calculate centrality metrics
     print("📈 Calculating centrality metrics...")
     degree_cent = nx.degree_centrality(G)
     
-    # Betweenness et PageRank peuvent échouer sur des graphes très petits ou déconnectés
+    # Betweenness and PageRank may fail on very small or disconnected graphs
     try:
         betweenness_cent = nx.betweenness_centrality(G, weight='weight')
     except:
@@ -152,7 +152,7 @@ def main():
     except:
         pagerank = {node: 0 for node in G.nodes()}
 
-    # 5. Détection de communautés (Louvain)
+    # 5. Community detection (Louvain)
     print("🏘️ Detecting communities...")
     try:
         partition = louvain.best_partition(G, weight='weight')
@@ -160,7 +160,7 @@ def main():
         partition = {node: 0 for node in G.nodes()}
     nx.set_node_attributes(G, partition, 'group')
 
-    # 6. Sauvegarde des statistiques en CSV
+    # 6. Save statistics as CSV
     print(f"💾 Saving centrality stats to {OUTPUT_CSV}...")
     stats_data = []
     for node in G.nodes():
@@ -177,23 +177,23 @@ def main():
     stats_df = stats_df.sort_values(by="pagerank", ascending=False)
     stats_df.to_csv(OUTPUT_CSV, index=False)
 
-    # 7. Visualisation (Pyvis)
+    # 7. Visualization (Pyvis)
     print(f"🌐 Generating interactive visualization at {OUTPUT_HTML}...")
     net = Network(height="750px", width="100%", bgcolor="#222222", font_color="white", notebook=False)
     
-    # Configurer la physique pour une meilleure disposition
+    # Configure physics for a better layout
     net.force_atlas_2based(gravity=-50, central_gravity=0.01, spring_length=100, spring_strength=0.08, damping=0.4, overlap=0)
     net.show_buttons(filter_=['physics'])
 
     for node, attrs in G.nodes(data=True):
         group = attrs.get('group', 0)
-        size = attrs.get('size', 1) * 2 # Mettre à l'échelle pour la visibilité
+        size = attrs.get('size', 1) * 2 # Scale for visibility
         net.add_node(node, label=f"#{node}", title=f"Hashtag: #{node}<br>Group: {group}<br>Frequency: {attrs.get('size', 0)}", group=group, size=size)
 
     for source, target, data in G.edges(data=True):
         net.add_edge(source, target, value=data['weight'], title=f"Co-occurrences: {data['weight']}")
 
-    # Sauvegarder la visualisation
+    # Save the visualization
     net.save_graph(OUTPUT_HTML)
     
     print("✅ Week 4 tasks completed successfully!")
