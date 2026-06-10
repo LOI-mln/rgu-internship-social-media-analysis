@@ -1,83 +1,309 @@
-📊 RGU Internship: Cross-platform Social Media Analysis
+# RGU Internship: Cross-Platform Social Media Analysis
 
-This project is part of a 10-week internship at Robert Gordon University (RGU). The objective is to collect, process, and analyze data from Reddit and YouTube to study online communication dynamics, sentiment, and toxicity.
+This project was developed during a 10-week internship at Robert Gordon University (RGU).
+It collects, cleans, analyzes, and visualizes social media data from several platforms in order to study online polarization, echo chambers, toxicity, and "we vs them" discourse patterns.
 
-🎯 Project Objectives
+Author: Milan Loi
 
-    Data Collection: Automated scraping via Reddit (PRAW) and YouTube (yt-dlp) APIs.
+## Main Features
 
-    NLP Analysis: Using language models (Hugging Face) for toxicity scoring and sentiment analysis.
+- Data acquisition from YouTube, Reddit, and public datasets.
+- Cleaning and normalization of social media text data.
+- NLP indicators for in-group and out-group language.
+- Toxicity and polarization analysis.
+- Hashtag and cross-platform network analysis.
+- Streamlit dashboard for interactive visualization.
+- Scripts for generating figures, reports, and presentation materials.
 
-    Visualization: Creating dashboards to compare behaviors across platforms.
+## Project Structure
 
-📂 Project Structure
-Plaintext
-
+```text
 .
-├── data/       # Raw and processed data (ignored by Git)
-├── docs/       # Documentation and internship reports
-├── src/        # Python source code (scrapers, analysis)
-├── tests/      # Test scripts
-├── .env        # Private API keys (ignored by Git)
-├── .gitignore  # Files to exclude from the repo
-└── README.md   # Project overview
+├── app/                         # Refactored Streamlit dashboard
+├── src/                         # Data acquisition, NLP, network, and utility scripts
+│   ├── acquisition/             # Scrapers and dataset fetchers
+│   ├── common/                  # Shared text and YouTube utilities
+│   ├── network/                 # Graph and community detection scripts
+│   ├── nlp/                     # CLIP, toxicity, and polarization analysis
+│   └── utils/                   # Plot, DOCX, and presentation generation scripts
+├── data/                        # Raw and cleaned datasets, ignored by Git
+├── deliverables/                # Generated outputs, figures, metrics, and presentations
+├── docs/                        # Reports, papers, and documentation
+├── tests/                       # Validation scripts
+├── app.py                       # Main Streamlit entry point
+├── run_demos.sh                 # Interactive demo launcher
+├── .env                         # Local secrets and API keys, ignored by Git
+├── .gitignore
+└── README.md
+```
 
-🛠 Installation
-Prerequisites
+## Requirements
 
-    Python 3.10 or higher
+Recommended environment:
 
-    A Reddit account (for API access)
+- Python 3.10 or newer
+- Git
+- pip
+- A terminal or shell
+- Optional: YouTube scraping requires `yt-dlp`
+- Optional: Perspective API requires a Google/Perspective API key
 
-1. Clone the project
-   Bash
+Main Python packages used by the project include:
 
-git clone <your-repo-url>
-cd <folder-name>
+```text
+streamlit
+pandas
+numpy
+plotly
+matplotlib
+seaborn
+networkx
+python-louvain
+pyvis
+python-dotenv
+tqdm
+datasets
+transformers
+torch
+Pillow
+python-docx
+python-pptx
+yt-dlp
+google-api-python-client
+```
 
-2. Set up the virtual environment
-   Bash
+If a `requirements.txt` file is available, prefer installing from it. If it is missing, generate it from the working machine before migration:
 
-python3 -m venv venv
+```bash
+pip freeze > requirements.txt
+```
 
-# Activate on Mac/Linux:
+## Installation on a New Machine
 
-source venv/bin/activate
+### 1. Clone the repository
 
-# Activate on Windows:
+```bash
+git clone github.com/loi-mln/rgu-internship-social-media-analysis
+cd rgu-internship-social-media-analysis
+```
 
-.\venv\Scripts\activate
+### 2. Create a virtual environment
 
-3. Install dependencies
-   Bash
+macOS/Linux:
 
-pip install praw yt-dlp transformers torch pandas python-dotenv
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-⚙️ Configuration
+Windows PowerShell:
 
-Create a .env file at the root of the project to store your credentials:
-Plaintext
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-REDDIT_CLIENT_ID="your_id"
-REDDIT_CLIENT_SECRET="your_secret"
-REDDIT_USER_AGENT="RGU_Internship_Scraper_v1.0"
+### 3. Install dependencies
 
-🚀 Usage
+If `requirements.txt` exists:
 
-To test the scrapers (Week 1):
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-    Reddit: python src/test_reddit.py
+If `requirements.txt` does not exist yet:
 
-    YouTube: python src/test_youtube.py
+```bash
+pip install streamlit pandas numpy plotly matplotlib seaborn networkx python-louvain pyvis python-dotenv tqdm datasets transformers torch Pillow python-docx python-pptx yt-dlp google-api-python-client
+```
 
-🗓 Roadmap (Overview)
+## Environment Variables
 
-    Phase 1: Setup and Scraping (Weeks 1-2)
+Create a `.env` file at the project root if you use API-based scripts.
 
-    Phase 2: Exploratory Analysis & NLP (Weeks 3-6)
+Example:
 
-    Phase 3: Dashboard & Reporting (Weeks 7-9)
+```env
+PERSPECTIVE_API_KEY=your_perspective_api_key_here
+REDDIT_CLIENT_ID=your_reddit_client_id_here
+REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
+REDDIT_USER_AGENT=RGU_Internship_Scraper_v1.0
+```
 
-    Phase 4: Defense & Finalization (Week 10)
+Important: never commit `.env` to Git. It contains private credentials.
 
-Author: Milan LOI - Intern at RGU
+## Migrating the Project to Another Machine
+
+Use this checklist when moving the project.
+
+### On the current machine
+
+1. Save the latest code:
+
+```bash
+git status
+git add .
+git commit -m "Prepare project for migration"
+git push
+```
+
+2. Export dependencies:
+
+```bash
+source .venv/bin/activate
+pip freeze > requirements.txt
+git add requirements.txt
+git commit -m "Add Python dependencies"
+git push
+```
+
+3. Copy local files ignored by Git.
+
+The following paths are usually not fully stored in Git and may need to be copied manually:
+
+```text
+data/
+.env
+deliverables/
+docs/
+```
+
+Create a backup archive:
+
+```bash
+zip -r migration_backup.zip data deliverables docs .env
+```
+
+### On the new machine
+
+1. Clone the repository.
+2. Create and activate `.venv`.
+3. Install dependencies with `pip install -r requirements.txt`.
+4. Copy or unzip `migration_backup.zip` into the project root.
+5. Run the dashboard:
+
+```bash
+streamlit run app.py
+```
+
+## Running the Dashboard
+
+Start the Streamlit application:
+
+```bash
+streamlit run app.py
+```
+
+The dashboard should open in the browser at:
+
+```text
+http://localhost:8501
+```
+
+## Running Demo Scripts
+
+The project includes an interactive launcher:
+
+```bash
+chmod +x run_demos.sh
+./run_demos.sh
+```
+
+The menu can launch:
+
+- Streamlit dashboard
+- CLIP multimodal evaluation
+- polarization index computation
+- cross-platform network analysis
+- PowerPoint generation
+
+## Useful Commands
+
+Run the CLIP alignment evaluation:
+
+```bash
+python src/nlp/evaluate_alignment.py
+```
+
+Compute cluster polarization:
+
+```bash
+python src/nlp/week6_polarization.py
+```
+
+Generate the cross-platform graph:
+
+```bash
+python src/network/cross_platform_network.py
+```
+
+Generate static hashtag plots:
+
+```bash
+python src/utils/generate_static_plots.py
+```
+
+Generate the PowerPoint presentation:
+
+```bash
+python src/utils/generate_presentation.py
+```
+
+## Data Notes
+
+The `data/` directory is ignored by Git because it can be large and may contain raw datasets.
+
+Expected subfolders include:
+
+```text
+data/raw/
+data/cleaned/
+data/uploads/
+```
+
+If the dashboard shows missing data, check that the required CSV, GML, JSON, or generated metric files were copied into the same paths used on the original machine.
+
+## Troubleshooting
+
+### `streamlit: command not found`
+
+Activate the virtual environment and install dependencies:
+
+```bash
+source .venv/bin/activate
+pip install streamlit
+```
+
+### Missing datasets
+
+Copy the `data/` folder from the original machine, or rerun the acquisition and cleaning scripts.
+
+### Missing API key
+
+Create `.env` at the project root and add the required key, for example:
+
+```env
+PERSPECTIVE_API_KEY=your_key_here
+```
+
+### PyTorch or Transformers installation issues
+
+Install PyTorch using the command recommended for your operating system from the official PyTorch website, then reinstall the remaining dependencies.
+
+## Git Ignore Policy
+
+The repository intentionally ignores:
+
+```text
+data/
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+```
+
+This keeps the repository lighter and avoids committing secrets or generated cache files.
