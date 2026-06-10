@@ -123,3 +123,21 @@ def load_graph_files(gml_path: str, layout_path: str) -> tuple[bool, str]:
     if not os.path.exists(layout_path):
         return False, f"Layout file not found: {layout_path}"
     return True, "Files found"
+
+
+@st.cache_data(show_spinner=False)
+def load_clip_data() -> Optional[pd.DataFrame]:
+    """
+    Load precomputed CLIP data.
+    
+    Returns:
+        DataFrame or None if file doesn't exist
+    """
+    clip_path = "data/cleaned/hateful_memes_clip_scored.csv"
+    if not os.path.exists(clip_path):
+        return None
+    try:
+        return pd.read_csv(clip_path)
+    except Exception:
+        return None
+

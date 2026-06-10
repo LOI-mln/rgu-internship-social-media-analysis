@@ -36,16 +36,13 @@ show_menu() {
     echo " 4) Compute Cross-Platform Network Modularity (Louvain)"
     echo "    (Synthesizes YouTube/Instagram/Twitter interaction graphs)"
     echo ""
-    echo " 5) Regenerate PowerPoint Slide Deck"
-    echo "    (Compiles the defense presentation programmatically)"
-    echo ""
-    echo " 6) Quit"
+    echo " 5) Quit"
     echo "================================================================="
 }
 
 while true; do
     show_menu
-    read -p "Enter choice [1-6]: " choice
+    read -p "Enter choice [1-5]: " choice
     echo ""
     
     case $choice in
@@ -67,15 +64,11 @@ while true; do
             python src/network/cross_platform_network.py
             ;;
         5)
-            echo "Compiling RGU Internship Defense PowerPoint slide deck..."
-            python src/utils/generate_presentation.py
-            ;;
-        6)
             echo "Exiting control panel. Goodbye."
             exit 0
             ;;
         *)
-            echo "Invalid choice. Please select between 1 and 6."
+            echo "Invalid choice. Please select between 1 and 5."
             ;;
     esac
     

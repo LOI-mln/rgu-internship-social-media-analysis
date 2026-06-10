@@ -13,7 +13,7 @@ Author: Milan Loi
 - Toxicity and polarization analysis.
 - Hashtag and cross-platform network analysis.
 - Streamlit dashboard for interactive visualization.
-- Scripts for generating figures, reports, and presentation materials.
+- Scripts for generating figures and reports.
 
 ## Project Structure
 
@@ -25,7 +25,7 @@ Author: Milan Loi
 │   ├── common/                  # Shared text and YouTube utilities
 │   ├── network/                 # Graph and community detection scripts
 │   ├── nlp/                     # CLIP, toxicity, and polarization analysis
-│   └── utils/                   # Plot, DOCX, and presentation generation scripts
+│   └── utils/                   # Plot and DOCX generation scripts
 ├── data/                        # Raw and cleaned datasets, ignored by Git
 ├── deliverables/                # Minimal dashboard runtime artifacts only
 ├── docs/                        # Reports, papers, and documentation
@@ -67,7 +67,6 @@ transformers
 torch
 Pillow
 python-docx
-python-pptx
 yt-dlp
 google-api-python-client
 ```
@@ -115,7 +114,7 @@ pip install -r requirements.txt
 If `requirements.txt` does not exist yet:
 
 ```bash
-pip install streamlit pandas numpy plotly matplotlib seaborn networkx python-louvain pyvis python-dotenv tqdm datasets transformers torch Pillow python-docx python-pptx yt-dlp google-api-python-client
+pip install streamlit pandas numpy plotly matplotlib seaborn networkx python-louvain pyvis python-dotenv tqdm datasets transformers torch Pillow python-docx yt-dlp google-api-python-client
 ```
 
 ## Environment Variables
@@ -215,7 +214,6 @@ The menu can launch:
 - CLIP multimodal evaluation
 - polarization index computation
 - cross-platform network analysis
-- PowerPoint generation
 
 ## Useful Commands
 
@@ -241,12 +239,6 @@ Generate static hashtag plots:
 
 ```bash
 python src/utils/generate_static_plots.py
-```
-
-Generate the PowerPoint presentation:
-
-```bash
-python src/utils/generate_presentation.py
 ```
 
 ## Data Notes
