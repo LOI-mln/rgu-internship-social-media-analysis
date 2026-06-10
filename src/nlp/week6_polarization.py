@@ -1,13 +1,18 @@
 import os
 import pandas as pd
 import networkx as nx
-import re
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from tqdm import tqdm
 import time
+import sys
+
+# Add the src directory to the import path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from src.common import count_pronouns, WE_WORDS, THEM_WORDS
 
 load_dotenv()
 PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY")
@@ -15,16 +20,6 @@ PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY")
 # Create deliverables folder
 OUTPUT_DIR = "deliverables/week_6"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# We / Them Lexicons
-WE_PRONOUNS = ["we", "us", "our", "ours", "ourselves"]
-THEM_PRONOUNS = ["they", "them", "their", "theirs", "themselves"]
-
-def count_pronouns(text, pronouns):
-    if not isinstance(text, str):
-        return 0
-    words = re.findall(r'\b\w+\b', text.lower())
-    return sum(1 for word in words if word in pronouns)
 
 def get_perspective_toxicity(text):
     if not PERSPECTIVE_API_KEY:
@@ -78,8 +73,8 @@ def main():
                     community_texts[comm] = []
                     community_pronouns[comm] = {'we': 0, 'them': 0}
                 
-                we_count = row.get('we_count', count_pronouns(row['text'], WE_PRONOUNS))
-                them_count = row.get('them_count', count_pronouns(row['text'], THEM_PRONOUNS))
+                we_count = row.get('we_count', count_pronouns(row['text'], WE_WORDS))
+                them_count = row.get('them_count', count_pronouns(row['text'], THEM_WORDS))
                 
                 community_pronouns[comm]['we'] += we_count
                 community_pronouns[comm]['them'] += them_count
@@ -99,8 +94,8 @@ def main():
                     community_texts[comm] = []
                     community_pronouns[comm] = {'we': 0, 'them': 0}
                 
-                we_count = row.get('we_count', count_pronouns(row['full_text'], WE_PRONOUNS))
-                them_count = row.get('them_count', count_pronouns(row['full_text'], THEM_PRONOUNS))
+                we_count = row.get('we_count', count_pronouns(row['full_text'], WE_WORDS))
+                them_count = row.get('them_count', count_pronouns(row['full_text'], THEM_WORDS))
                 
                 community_pronouns[comm]['we'] += we_count
                 community_pronouns[comm]['them'] += them_count
