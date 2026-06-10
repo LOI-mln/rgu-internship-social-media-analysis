@@ -1,5 +1,15 @@
 data/
 
+# Generated deliverables are ignored by default.
+# Keep only the dashboard runtime artifacts tracked in Git.
+deliverables/*
+!deliverables/week_5/
+!deliverables/week_5/cross_platform_merged.gml
+!deliverables/week_5/echo_chamber_metrics.txt
+!deliverables/week_5/layout_positions.json
+!deliverables/week_6/
+!deliverables/week_6/community_polarization_metrics.csv
+
 venv/
 .venv/
 env/

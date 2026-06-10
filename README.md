@@ -27,7 +27,7 @@ Author: Milan Loi
 │   ├── nlp/                     # CLIP, toxicity, and polarization analysis
 │   └── utils/                   # Plot, DOCX, and presentation generation scripts
 ├── data/                        # Raw and cleaned datasets, ignored by Git
-├── deliverables/                # Generated outputs, figures, metrics, and presentations
+├── deliverables/                # Minimal dashboard runtime artifacts only
 ├── docs/                        # Reports, papers, and documentation
 ├── tests/                       # Validation scripts
 ├── app.py                       # Main Streamlit entry point
@@ -83,7 +83,7 @@ pip freeze > requirements.txt
 ### 1. Clone the repository
 
 ```bash
-git clone github.com/loi-mln/rgu-internship-social-media-analysis
+git clone https://github.com/loi-mln/rgu-internship-social-media-analysis.git
 cd rgu-internship-social-media-analysis
 ```
 
@@ -165,14 +165,13 @@ The following paths are usually not fully stored in Git and may need to be copie
 ```text
 data/
 .env
-deliverables/
 docs/
 ```
 
 Create a backup archive:
 
 ```bash
-zip -r migration_backup.zip data deliverables docs .env
+zip -r migration_backup.zip data docs .env
 ```
 
 ### On the new machine
@@ -264,6 +263,22 @@ data/uploads/
 
 If the dashboard shows missing data, check that the required CSV, GML, JSON, or generated metric files were copied into the same paths used on the original machine.
 
+## Deliverables Policy
+
+Most files in `deliverables/` are generated outputs and are not required to run the project.
+They are ignored by Git to keep the repository lighter.
+
+Only the dashboard runtime artifacts are kept:
+
+```text
+deliverables/week_5/cross_platform_merged.gml
+deliverables/week_5/echo_chamber_metrics.txt
+deliverables/week_5/layout_positions.json
+deliverables/week_6/community_polarization_metrics.csv
+```
+
+Other figures, presentations, HTML exports, notebooks, and weekly snapshots can be regenerated with the scripts in `src/`.
+
 ## Troubleshooting
 
 ### `streamlit: command not found`
@@ -297,6 +312,7 @@ The repository intentionally ignores:
 
 ```text
 data/
+deliverables/
 .env
 .venv/
 venv/
