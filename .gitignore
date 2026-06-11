@@ -1,4 +1,6 @@
-data/
+# Ignore all data contents by default, except the cleaned datasets directory
+data/*
+!data/cleaned/
 
 # Generated deliverables are ignored by default.
 # Keep only the dashboard runtime artifacts tracked in Git.
