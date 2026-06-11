@@ -126,7 +126,12 @@ def render_page_1():
             selected_id = st.selectbox("Meme ID Selection", filtered_df['id'].tolist()[:50])
             selected_row = filtered_df[filtered_df['id'] == selected_id].iloc[0]
             
-            st.image(selected_row['image_path'], width=400)
+            import os
+            image_path = selected_row['image_path']
+            if os.path.exists(image_path):
+                st.image(image_path, width=400)
+            else:
+                st.info("Visual meme image not found locally (raw image datasets are excluded from Git repository to keep the codebase lightweight). Showing metadata and metrics only.")
             
             st.markdown(f"""
             *   **Text Caption:** "{selected_row['text']}"
