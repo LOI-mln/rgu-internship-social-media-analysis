@@ -88,11 +88,11 @@ def _render_sidebar_config():
         <div style="font-size: 11px; color: #8E9AA8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Classifier & Graph</div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
             <span style="color: #8E9AA8;">Toxicity Model:</span>
-            <span style="font-weight: 700; color: #3B82F6;">Perspective / DistilBERT</span>
+            <span style="font-weight: 700; color: #60A5FA;">Perspective / DistilBERT</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
             <span style="color: #8E9AA8;">Graph Modularity:</span>
-            <span style="font-weight: 700; color: #3B82F6;">Q = 0.6071</span>
+            <span style="font-weight: 700; color: #60A5FA;">Q = 0.6071</span>
         </div>
     </div>
     """, unsafe_allow_html=True)

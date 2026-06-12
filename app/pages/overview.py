@@ -65,7 +65,7 @@ def render_page_1():
                 y='clip_similarity',
                 color='Toxicity Status',
                 labels={'Toxicity Status': 'Toxicity Status', 'clip_similarity': 'Cosine Similarity (CLIP)'},
-                color_discrete_sequence=['#3B82F6', '#1D4ED8']
+                color_discrete_sequence=['#3B82F6', '#60A5FA']
             )
             fig_box.update_layout(
                 plot_bgcolor='#0E1117',
@@ -94,7 +94,7 @@ def render_page_1():
                 y='Visual Label',
                 orientation='h',
                 color='Visual Label',
-                color_discrete_sequence=['#3B82F6', '#1D4ED8', '#5C6878']
+                color_discrete_sequence=['#3B82F6', '#60A5FA', '#93C5FD']
             )
             fig_bar.update_layout(
                 plot_bgcolor='#0E1117',

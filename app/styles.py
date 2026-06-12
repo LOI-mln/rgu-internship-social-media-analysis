@@ -20,7 +20,7 @@ def get_custom_css() -> str:
     
     /* Headers with Gradient */
     h1, h2, h3 {
-        background: -webkit-linear-gradient(45deg, #3B82F6, #1D4ED8);
+        background: -webkit-linear-gradient(45deg, #60A5FA, #3B82F6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
@@ -32,20 +32,30 @@ def get_custom_css() -> str:
     
     /* Premium Sidebar Styling & Navigation */
     section[data-testid="stSidebar"] {
-        background-color: #11141E !important;
-        border-right: 1px solid #232936 !important;
+        background-color: #0A0D15 !important;
+        border-right: 1px solid #1E2330 !important;
         width: 320px !important;
     }
     
-    section[data-testid="stSidebar"] h2 {
-        background: -webkit-linear-gradient(45deg, #3B82F6, #1D4ED8);
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3 {
+        background: -webkit-linear-gradient(45deg, #60A5FA, #3B82F6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 1.3rem !important;
         font-weight: 800 !important;
+        border-bottom: none !important;
+    }
+    
+    section[data-testid="stSidebar"] h2 {
+        font-size: 1.3rem !important;
         margin-top: 20px !important;
         margin-bottom: 20px !important;
-        border-bottom: none !important;
+    }
+    
+    section[data-testid="stSidebar"] h3 {
+        font-size: 1.1rem !important;
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
     }
 
     /* Style Streamlit Radio Buttons as flat vertical menu items */
@@ -64,7 +74,7 @@ def get_custom_css() -> str:
         transition: color 0.2s ease-in-out !important;
         cursor: pointer !important;
         width: 100% !important;
-        color: #8E9AA8 !important;
+        color: #A0AEC0 !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 14px !important;
         font-weight: 400 !important;
@@ -93,23 +103,26 @@ def get_custom_css() -> str:
         color: #FFFFFF !important;
     }
 
-    /* Selected Option Style */
-    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] {
+    /* Selected Option Style (Support both label and parent wrapper data-checked) */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"],
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label {
         background: transparent !important;
         border: none !important;
-        color: #3B82F6 !important;
+        color: #60A5FA !important;
         font-weight: 700 !important;
         box-shadow: none !important;
     }
-    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p {
-        color: #3B82F6 !important;
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p,
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label p {
+        color: #60A5FA !important;
         font-weight: 700 !important;
     }
     
     /* Prepend arrow to active item */
-    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p::before {
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p::before,
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label p::before {
         content: "> " !important;
-        color: #3B82F6 !important;
+        color: #60A5FA !important;
         font-weight: 700 !important;
     }
     
