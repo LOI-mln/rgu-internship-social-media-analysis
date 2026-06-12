@@ -100,9 +100,9 @@ def _render_polarization_heatmap_tab(metrics_df):
         
         fig_hm.update_layout(
             coloraxis_showscale=False,
-            plot_bgcolor='#0E1117',
-            paper_bgcolor='#0E1117',
-            font_color="white",
+            plot_bgcolor='#F8FAFC',
+            paper_bgcolor='#F8FAFC',
+            font_color="#0F172A",
             margin=dict(t=20, l=10, r=10, b=20),
             height=400
         )
@@ -152,9 +152,9 @@ def _render_topological_metrics_tab():
             color_discrete_sequence=px.colors.qualitative.Bold
         )
         fig_size.update_layout(
-            plot_bgcolor='#0E1117',
-            paper_bgcolor='#0E1117',
-            font_color="white",
+            plot_bgcolor='#F8FAFC',
+            paper_bgcolor='#F8FAFC',
+            font_color="#0F172A",
             showlegend=False,
             xaxis_title="",
             yaxis_title="Core Nodes Count"

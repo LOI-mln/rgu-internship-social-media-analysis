@@ -47,7 +47,7 @@ def _render_platform_fingerprints(df_ts: pd.DataFrame):
         color_discrete_sequence=px.colors.qualitative.Bold
     )
     fig_comp.update_layout(
-        plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white",
+        plot_bgcolor='#F8FAFC', paper_bgcolor='#F8FAFC', font_color="#0F172A",
         showlegend=False, xaxis_title="", yaxis_title="Ratio (We / Them)"
     )
     st.plotly_chart(fig_comp, use_container_width=True)
@@ -166,11 +166,11 @@ def _render_temporal_evolution(df_ts: pd.DataFrame):
                     type='line',
                     xref='x', yref='paper',
                     x0=q, y0=0, x1=q, y1=1,
-                    line=dict(color='rgba(255, 255, 255, 0.2)', width=1, dash='dash')
+                    line=dict(color='rgba(15, 23, 42, 0.15)', width=1, dash='dash')
                 )
         
         fig_ts.update_layout(
-            plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white",
+            plot_bgcolor='#F8FAFC', paper_bgcolor='#F8FAFC', font_color="#0F172A",
             xaxis_title="Quarter", yaxis_title="Average Pronoun Intensity",
             xaxis=dict(tickangle=-45, dtick=2)
         )
@@ -205,7 +205,7 @@ def _render_temporal_evolution(df_ts: pd.DataFrame):
         )
         
         fig_ts_compare.update_layout(
-            plot_bgcolor='#0E1117', paper_bgcolor='#0E1117', font_color="white",
+            plot_bgcolor='#F8FAFC', paper_bgcolor='#F8FAFC', font_color="#0F172A",
             xaxis_title="Quarter", yaxis_title="Ratio (We / Them)",
             xaxis=dict(tickangle=-45, dtick=2)
         )

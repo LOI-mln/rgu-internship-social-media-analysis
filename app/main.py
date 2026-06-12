@@ -70,35 +70,35 @@ def _render_sidebar_config():
     """Render system configuration in the sidebar."""
     st.sidebar.markdown("### System Configuration")
     st.sidebar.markdown("""
-    <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; font-family: 'Inter', sans-serif;">
-        <div style="font-size: 11px; color: #8E9AA8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Database Metrics</div>
+    <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; font-family: 'Inter', sans-serif; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Database Metrics</div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-            <span style="color: #8E9AA8;">Total Corpus:</span>
-            <span style="font-weight: 700; color: #FAFAFA;">32,223</span>
+            <span style="color: #475569;">Total Corpus:</span>
+            <span style="font-weight: 700; color: #0F172A;">32,223</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-            <span style="color: #8E9AA8;">- YouTube:</span>
-            <span style="font-weight: 600; color: #FAFAFA;">24,860</span>
+            <span style="color: #475569;">- YouTube:</span>
+            <span style="font-weight: 600; color: #0F172A;">24,860</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
-            <span style="color: #8E9AA8;">- Reddit:</span>
-            <span style="font-weight: 600; color: #FAFAFA;">7,363</span>
+            <span style="color: #475569;">- Reddit:</span>
+            <span style="font-weight: 600; color: #0F172A;">7,363</span>
         </div>
-        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 8px 0;">
-        <div style="font-size: 11px; color: #8E9AA8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Classifier & Graph</div>
+        <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 8px 0;">
+        <div style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Classifier & Graph</div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-            <span style="color: #8E9AA8;">Toxicity Model:</span>
-            <span style="font-weight: 700; color: #60A5FA;">Perspective / DistilBERT</span>
+            <span style="color: #475569;">Toxicity Model:</span>
+            <span style="font-weight: 700; color: #1D4ED8;">Perspective / DistilBERT</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-            <span style="color: #8E9AA8;">Graph Modularity:</span>
-            <span style="font-weight: 700; color: #60A5FA;">Q = 0.6071</span>
+            <span style="color: #475569;">Graph Modularity:</span>
+            <span style="font-weight: 700; color: #1D4ED8;">Q = 0.6071</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     st.sidebar.markdown("""
-    <div style="margin-top: 20px; font-size: 11px; color: #5C6878; font-family: 'Inter', sans-serif; text-align: center;">
+    <div style="margin-top: 20px; font-size: 11px; color: #475569; font-family: 'Inter', sans-serif; text-align: center;">
         Milan Loi &bull; Supervisor: Dr. Shahana Bano
     </div>
     """, unsafe_allow_html=True)

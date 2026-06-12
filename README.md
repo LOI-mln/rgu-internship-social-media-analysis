@@ -182,7 +182,7 @@ zip -r migration_backup.zip data docs .env
 5. Run the dashboard:
 
 ```bash
-streamlit run app.py
+.venv/bin/streamlit run app.py
 ```
 
 ## Running the Dashboard
@@ -190,7 +190,7 @@ streamlit run app.py
 Start the Streamlit application:
 
 ```bash
-streamlit run app.py
+.venv/bin/streamlit run app.py
 ```
 
 The dashboard should open in the browser at:

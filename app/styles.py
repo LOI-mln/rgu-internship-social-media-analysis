@@ -13,14 +13,14 @@ def get_custom_css() -> str:
     <style>
     /* Main Background & Text */
     .stApp {
-        background-color: #0E1117;
-        color: #FAFAFA;
+        background-color: #F8FAFC;
+        color: #0F172A;
         font-family: 'Inter', sans-serif;
     }
     
     /* Headers with Gradient */
     h1, h2, h3 {
-        background: -webkit-linear-gradient(45deg, #60A5FA, #3B82F6);
+        background: -webkit-linear-gradient(45deg, #1E3A8A, #2563EB);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
@@ -32,14 +32,14 @@ def get_custom_css() -> str:
     
     /* Premium Sidebar Styling & Navigation */
     section[data-testid="stSidebar"] {
-        background-color: #0A0D15 !important;
-        border-right: 1px solid #1E2330 !important;
+        background-color: #F1F5F9 !important;
+        border-right: 1px solid #E2E8F0 !important;
         width: 320px !important;
     }
     
     section[data-testid="stSidebar"] h2,
     section[data-testid="stSidebar"] h3 {
-        background: -webkit-linear-gradient(45deg, #60A5FA, #3B82F6);
+        background: -webkit-linear-gradient(45deg, #1E3A8A, #2563EB);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800 !important;
@@ -74,7 +74,7 @@ def get_custom_css() -> str:
         transition: color 0.2s ease-in-out !important;
         cursor: pointer !important;
         width: 100% !important;
-        color: #A0AEC0 !important;
+        color: #475569 !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 14px !important;
         font-weight: 400 !important;
@@ -95,12 +95,12 @@ def get_custom_css() -> str:
     /* Hover Style */
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label:hover {
         background-color: transparent !important;
-        color: #FFFFFF !important;
+        color: #0F172A !important;
         border: none !important;
         box-shadow: none !important;
     }
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label:hover p {
-        color: #FFFFFF !important;
+        color: #0F172A !important;
     }
 
     /* Selected Option Style (Support both label and parent wrapper data-checked) */
@@ -108,13 +108,13 @@ def get_custom_css() -> str:
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label {
         background: transparent !important;
         border: none !important;
-        color: #60A5FA !important;
+        color: #1D4ED8 !important;
         font-weight: 700 !important;
         box-shadow: none !important;
     }
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p,
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label p {
-        color: #60A5FA !important;
+        color: #1D4ED8 !important;
         font-weight: 700 !important;
     }
     
@@ -122,7 +122,7 @@ def get_custom_css() -> str:
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-checked="true"] p::before,
     div[data-testid="stSidebarUserContent"] div[role="radiogroup"] div[data-checked="true"] label p::before {
         content: "> " !important;
-        color: #60A5FA !important;
+        color: #1D4ED8 !important;
         font-weight: 700 !important;
     }
     
@@ -142,18 +142,18 @@ def get_custom_css() -> str:
     
     /* Metric Cards */
     div[data-testid="metric-container"] {
-        background-color: #1E1E1E;
-        border: 1px solid #333;
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
         padding: 5% 5% 5% 10%;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
     
     /* Custom divider */
     hr {
         border: 0;
         height: 1px;
-        background-image: linear-gradient(to right, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0));
+        background-image: linear-gradient(to right, rgba(37, 99, 235, 0), rgba(37, 99, 235, 0.2), rgba(37, 99, 235, 0));
         margin: 40px 0;
     }
     </style>

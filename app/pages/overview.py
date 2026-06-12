@@ -68,9 +68,9 @@ def render_page_1():
                 color_discrete_sequence=['#3B82F6', '#60A5FA']
             )
             fig_box.update_layout(
-                plot_bgcolor='#0E1117',
-                paper_bgcolor='#0E1117',
-                font_color="white",
+                plot_bgcolor='#F8FAFC',
+                paper_bgcolor='#F8FAFC',
+                font_color="#0F172A",
                 showlegend=False
             )
             st.plotly_chart(fig_box, use_container_width=True)
@@ -97,9 +97,9 @@ def render_page_1():
                 color_discrete_sequence=['#3B82F6', '#60A5FA', '#93C5FD']
             )
             fig_bar.update_layout(
-                plot_bgcolor='#0E1117',
-                paper_bgcolor='#0E1117',
-                font_color="white",
+                plot_bgcolor='#F8FAFC',
+                paper_bgcolor='#F8FAFC',
+                font_color="#0F172A",
                 showlegend=False
             )
             st.plotly_chart(fig_bar, use_container_width=True)

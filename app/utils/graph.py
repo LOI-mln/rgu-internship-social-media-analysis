@@ -42,7 +42,7 @@ def render_network_graph(gml_path: str, layout_path: str, min_degree: int = 2) -
     
     edge_trace = go.Scattergl(
         x=edge_x, y=edge_y,
-        line=dict(width=0.5, color='rgba(255,255,255,0.2)'),
+        line=dict(width=0.5, color='rgba(15,23,42,0.15)'),
         hoverinfo='none', mode='lines'
     )
     
@@ -98,7 +98,7 @@ def render_network_graph(gml_path: str, layout_path: str, min_degree: int = 2) -
                 color=comm_color,
                 size=c_size,
                 line_width=0.3,
-                line=dict(color='rgba(255,255,255,0.4)')
+                line=dict(color='rgba(0,0,0,0.15)')
             )
         )
         traces.append(node_trace)
@@ -107,12 +107,12 @@ def render_network_graph(gml_path: str, layout_path: str, min_degree: int = 2) -
         showlegend=True,
         hovermode='closest',
         margin=dict(b=0, l=0, r=0, t=0),
-        plot_bgcolor='#0E1117',
-        paper_bgcolor='#0E1117',
+        plot_bgcolor='#F8FAFC',
+        paper_bgcolor='#F8FAFC',
         legend=dict(
-            font=dict(color="white"),
-            bgcolor="rgba(14,17,23,0.5)",
-            bordercolor="#232936",
+            font=dict(color="#0F172A"),
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="#E2E8F0",
             borderwidth=1,
             yanchor="top",
             y=0.99,
